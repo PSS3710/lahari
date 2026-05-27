@@ -1,0 +1,239 @@
+[
+  {
+    "folder": "Songs",
+    "type": "nested",
+    "subfolders": [
+      {
+        "name": "Baba ",
+        "songs": [
+          {
+            "title": "Song 1",
+            "file": "/songs/f1/s1/song1.mp3",
+            "lyrics": "Lyrics 1"
+          }
+        ]
+      },
+      {
+        "name": "Devi Matha",
+        "songs": [
+          {
+            "title": "Song 1",
+            "file": "/songs/f1/s1/song1.mp3",
+            "lyrics": "Lyrics 1"
+          }
+        ]
+      },
+      {
+        "name": "Ganesha",
+        "songs": [
+          {
+            "title": "Song 1",
+            "file": "/songs/f1/s1/song1.mp3",
+            "lyrics": "Lyrics 1"
+          }
+        ]
+      },
+      {
+        "name": "Guru",
+        "songs": [
+          {
+            "title": "Song 1",
+            "file": "/songs/f1/s1/song1.mp3",
+            "lyrics": "Lyrics 1"
+          }
+        ]
+      },
+      {
+        "name": "Hanuman",
+        "songs": [
+          {
+            "title": "Song 1",
+            "file": "/songs/f1/s1/song1.mp3",
+            "lyrics": "Lyrics 1"
+          }
+        ]
+      },
+      {
+        "name": "Krishna",
+        "songs": [
+          {
+            "title": "Song 1",
+            "file": "/songs/f1/s1/song1.mp3",
+            "lyrics": "Lyrics 1"
+          }
+        ]
+      },
+      {
+        "name": "Lakshmi",
+        "songs": [
+          {
+            "title": "Song 1",
+            "file": "/songs/f1/s1/song1.mp3",
+            "lyrics": "Lyrics 1"
+          }
+        ]
+      },
+      {
+        "name": "Muruga",
+        "songs": [
+          {
+            "title": "Song 1",
+            "file": "/songs/f1/s1/song1.mp3",
+            "lyrics": "Lyrics 1"
+          }
+        ]
+      },
+      {
+        "name": "Saraswati",
+        "songs": [
+          {
+            "title": "Song 1",
+            "file": "/songs/f1/s1/song1.mp3",
+            "lyrics": "Lyrics 1"
+          }
+        ]
+      },
+      {
+        "name": "Vishnu",
+        "songs": [
+          {
+            "title": "Govinda eni koluvare",
+            "file": "/songs/Vishnu/govinda govida eni koluvare.mp3",
+            "lyrics": "Lyrics 1"
+          }
+        ]
+      },
+      {
+        "name": "Shiva",
+        "songs": [
+          {
+            "title": "Song 2",
+            "file": "/songs/f1/s2/song2.mp3",
+            "lyrics": "Lyrics 2"
+          }
+        ]
+      }
+    ]
+  },
+
+  {
+    "folder": "Roju oka Chinthana",
+    "type": "flat",
+    "songs": [
+      {
+        "title": "22.RadhaRani with Vishakha",
+        "file": "/Roju oka Chinthana/22.RadhaRani with Vishakha.. .mp3",
+        "lyrics": "NONE"
+      },
+      {
+        "title": "21.Farmers life shines bright, AmbarishStory",
+        "file": "/Roju oka Chinthana/21.Farmers life shines bright, AmbarishStory.mp3",
+        "lyrics": "NONE"
+      },
+      {
+        "title": "20.Bhakthi of Prahlada and Dhruva ",
+        "file": "/Roju oka Chinthana/20.Bhakthi of Prahlada and Dhruva .mp3",
+        "lyrics": "NONE"
+      },
+      {
+        "title": "19.Bhavanalo paripakvatha kalagali",
+        "file": "/Roju oka Chinthana/19.Bhavanalo paripakvatha kalagali.mp3",
+        "lyrics": "NONE"
+      },
+      {
+        "title": "18.A frog in a lady s stomach",
+        "file": "/Roju oka Chinthana/18.A frog in a lady s stomach.mp3",
+        "lyrics": "NONE"
+      },
+      {
+        "title": "17.By Lakshmana s Help Sitha Put Garland To Rama",
+        "file": "/Roju oka Chinthana/17.ByLakshmana sHelpSithaPutGarlandToRama.mp3",
+        "lyrics": "NONE"
+      },
+      {
+        "title": "16.Learn to face sukam dhukam equally",
+        "file": "/Roju oka Chinthana/16.Learn to face sukam dhukam equally.mp3",
+        "lyrics": "NONE"
+      },
+      {
+        "title": "15.connectKrishnaByBhakthiNotByForce",
+        "file": "/Roju oka Chinthana/15.connectKrishnaByBhakthiNotByForce.mp3",
+        "lyrics": "NONE"
+      },
+      {
+        "title": "14.KrishnaDecidesAndPlansInRightWay",
+        "file": "/Roju oka Chinthana/14.KrishnaDecidesAndPlansInRightWay.mp3",
+        "lyrics": "NONE"
+      },
+      {
+        "title": "12.KuntiMatha asked Lord to give more sorrows",
+        "file": "/Roju oka Chinthana/12.KuntiMatha asked Lord to give more sorrows.mp3",
+        "lyrics": "NONE"
+      },
+      {
+        "title": "10.God appears as we think him.. ",
+        "file": "/Roju oka Chinthana/10.God appears as we think him.. .mp3",
+        "lyrics": "NONE"
+      },
+      {
+        "title": "9.Anger is good sometimes ",
+        "file": "/Roju oka Chinthana/9.Anger is good sometimes .mp3",
+        "lyrics": "NONE"
+      },
+      {
+        "title": "8.A proud donkey",
+        "file": "/Roju oka Chinthana/8.A proud donkey.mp3",
+        "lyrics": "NONE"
+      }
+    ]
+  },
+
+  {
+    "folder": "Ashtakams and Sthothrams",
+    "type": "flat",
+    "songs": [
+      {
+        "title": "Song C",
+        "file": "/Ashtakams and Sthothrams/songC.mp3",
+        "lyrics": "Lyrics C"
+      }
+    ]
+  },
+
+  {
+    "folder": "Shatakams",
+    "type": "nested",
+    "subfolders": [
+      {
+        "name": "Sri Narasimha Shatakam",
+        "songs": [
+          {
+            "title": "Song X",
+            "file": "/Shatakams/Sri Narasimha Shatakam/songX.mp3",
+            "lyrics": "Lyrics X"
+          }
+        ]
+      },
+      {
+        "name": "Sri Krishna Shatakam",
+        "songs": [
+          {
+            "title": "Song Y",
+            "file": "/Shatakams/Sri Krishna Shatakam/songY.mp3",
+            "lyrics": "Lyrics Y"
+          }
+        ]
+      },
+      {
+        "name": "Sri Narayana Shatakam",
+        "songs": [
+          {
+            "title": "Song Z",
+            "file": "/Shatakams/Sri Narayana Shatakam/songZ.mp3",
+            "lyrics": "Lyrics Z"
+          }
+        ]
+      }
+    ]
+  }
+]
