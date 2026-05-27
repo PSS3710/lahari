@@ -56,10 +56,10 @@ export default function Home() {
 <div className="p-4 bg-white border-b flex items-center justify-center gap-3">
 
   <img
-    src="/Amma phot.png"
-    alt="Lahari Logo"
-    className="w-10 h-10 rounded-full object-cover"
-  />
+  src="/Amma photo.png"
+  alt="Lahari Logo"
+  className="w-10 h-10 rounded-xl object-cover shadow-md"
+/>
 
   <h1 className="text-2xl font-bold">
     Lahari
