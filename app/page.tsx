@@ -3,101 +3,167 @@
 import { useEffect, useState, useRef } from "react"
 
 export default function Home() {
-
   const [data, setData] = useState<any[]>([])
-
   const [selectedFolder, setSelectedFolder] = useState<any>(null)
   const [selectedSubFolder, setSelectedSubFolder] = useState<any>(null)
 
   const [search, setSearch] = useState("")
   const [currentSong, setCurrentSong] = useState<any>(null)
 
+  const [activePage, setActivePage] = useState("home")
+
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
     fetch("/songs.json")
-      .then(res => res.json())
-      .then(setData)
+      .then((res) => res.json())
+      .then((json) => setData(json))
   }, [])
 
-  // SAFE flatten for search
+  // SEARCH ALL SONGS
   const allSongs = data.flatMap((folder: any) => {
     if (folder.type === "nested") {
       return (folder.subfolders || []).flatMap((sf: any) =>
-        (sf.songs || []).map((s: any) => ({
-          ...s,
+        (sf.songs || []).map((song: any) => ({
+          ...song,
           folder: folder.folder,
-          subfolder: sf.name
+          subfolder: sf.name,
         }))
       )
-    } else {
-      return (folder.songs || []).map((s: any) => ({
-        ...s,
-        folder: folder.folder
-      }))
     }
+
+    return (folder.songs || []).map((song: any) => ({
+      ...song,
+      folder: folder.folder,
+    }))
   })
 
-  const filteredSongs = allSongs.filter((s: any) =>
-    s.title.toLowerCase().includes(search.toLowerCase())
+  const filteredSongs = allSongs.filter((song: any) =>
+    song.title.toLowerCase().includes(search.toLowerCase())
   )
 
   function playSong(song: any) {
     setCurrentSong(song)
+
     setTimeout(() => {
       audioRef.current?.play()
     }, 100)
   }
+  function playNextSong() {
+
+  const currentIndex = allSongs.findIndex(
+    (song: any) => song.title === currentSong?.title
+  )
+
+  if (currentIndex !== -1 && currentIndex < allSongs.length - 1) {
+    playSong(allSongs[currentIndex + 1])
+  }
+
+}
+
+function playPreviousSong() {
+
+  const currentIndex = allSongs.findIndex(
+    (song: any) => song.title === currentSong?.title
+  )
+
+  if (currentIndex > 0) {
+    playSong(allSongs[currentIndex - 1])
+  }
+
+}
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 pb-28">
+    <div className="min-h-screen bg-gray-50 text-gray-900 pb-32">
 
       {/* HEADER */}
-<div className="p-4 bg-white border-b flex items-center justify-center gap-3">
-
-  <img
-  src="/Amma photo.png"
-  alt="Lahari Logo"
-  className="w-10 h-10 rounded-xl object-cover shadow-md"
-/>
-
-  <h1 className="text-2xl font-bold">
-    Lahari
-  </h1>
-
-</div>
-
-      {/* SEARCH BAR */}
-      <div className="p-4">
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search songs..."
-          className="w-full p-3 border rounded-xl"
+      <div className="p-4 bg-white border-b flex items-center justify-center gap-3">
+        <img
+          src="/Amma photo.png"
+          alt="Lahari Logo"
+          className="w-10 h-10 rounded-xl object-cover shadow-md"
         />
+
+        <h1 className="text-2xl font-bold">
+          Lahari
+        </h1>
       </div>
 
-      {/* SEARCH MODE */}
-      {search ? (
-        <div className="p-4 space-y-3">
+      {/* NAVIGATION */}
+      <div className="flex justify-center gap-3 p-4 bg-white border-b">
 
-          {filteredSongs.map((song: any, i: number) => (
-            <div
-              key={i}
-              onClick={() => playSong(song)}
-              className="bg-white p-4 rounded-xl shadow cursor-pointer"
-            >
-              <div className="font-semibold">{song.title}</div>
-              <div className="text-sm text-gray-500">
-                {song.folder} {song.subfolder ? `→ ${song.subfolder}` : ""}
+        <button
+          onClick={() => {
+            setActivePage("home")
+            setSearch("")
+          }}
+          className="bg-gray-200 px-4 py-2 rounded-xl"
+        >
+          Home
+        </button>
+
+        <button
+          onClick={() => {
+            setActivePage("folders")
+            setSearch("")
+          }}
+          className="bg-gray-200 px-4 py-2 rounded-xl"
+        >
+          Folders
+        </button>
+
+        <button
+          onClick={() => setActivePage("search")}
+          className="bg-gray-200 px-4 py-2 rounded-xl"
+        >
+          Search
+        </button>
+
+      </div>
+
+      {/* SEARCH PAGE */}
+      {activePage === "search" && (
+        <div>
+
+          <div className="p-4">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search songs..."
+              className="w-full p-3 border rounded-xl"
+            />
+          </div>
+
+          <div className="p-4 space-y-3">
+
+            {filteredSongs.map((song: any, i: number) => (
+              <div
+                key={i}
+                onClick={() => playSong(song)}
+                className="bg-white p-4 rounded-xl shadow cursor-pointer"
+              >
+
+                <div className="font-semibold">
+                  {song.title}
+                </div>
+
+                <div className="text-sm text-gray-500">
+                  {song.folder}
+                  {song.subfolder ? ` → ${song.subfolder}` : ""}
+                </div>
+
               </div>
-            </div>
-          ))}
+            ))}
+
+          </div>
 
         </div>
-      ) : (
+      )}
 
+      {/* HOME + FOLDERS */}
+      {(activePage === "home" || activePage === "folders") && (
         <>
+
           {/* MAIN FOLDERS */}
           {!selectedFolder && (
             <div className="p-4 grid gap-4">
@@ -108,47 +174,54 @@ export default function Home() {
                   onClick={() => setSelectedFolder(folder)}
                   className="bg-white p-5 rounded-xl shadow cursor-pointer"
                 >
+
                   {folder.folder}
+
                 </div>
               ))}
 
             </div>
           )}
 
-          {/* NESTED FOLDER VIEW */}
-          {selectedFolder && selectedFolder.type === "nested" && !selectedSubFolder && (
-            <div className="p-4">
+          {/* NESTED FOLDERS */}
+          {selectedFolder &&
+            selectedFolder.type === "nested" &&
+            !selectedSubFolder && (
+              <div className="p-4">
 
-              <button
-                onClick={() => setSelectedFolder(null)}
-                className="text-blue-500 mb-4"
-              >
-                ← Back
-              </button>
+                <button
+                  onClick={() => setSelectedFolder(null)}
+                  className="bg-gray-200 px-4 py-2 rounded-xl mb-4"
+                >
+                  ← Back
+                </button>
 
-              <div className="grid gap-4">
+                <div className="grid gap-4">
 
-                {(selectedFolder.subfolders || []).map((sf: any, i: number) => (
-                  <div
-                    key={i}
-                    onClick={() => setSelectedSubFolder(sf)}
-                    className="bg-white p-4 rounded-xl shadow cursor-pointer"
-                  >
-                    {sf.name}
-                  </div>
-                ))}
+                  {(selectedFolder.subfolders || []).map((sf: any, i: number) => (
+                    <div
+                      key={i}
+                      onClick={() => setSelectedSubFolder(sf)}
+                      className="bg-white p-4 rounded-xl shadow cursor-pointer"
+                    >
+
+                      {sf.name}
+
+                    </div>
+                  ))}
+
+                </div>
 
               </div>
-            </div>
-          )}
+            )}
 
-          {/* SUBFOLDER SONGS (SAFE FIX HERE) */}
+          {/* SUBFOLDER SONGS */}
           {selectedSubFolder && (
             <div className="p-4">
 
               <button
                 onClick={() => setSelectedSubFolder(null)}
-                className="text-blue-500 mb-4"
+                className="bg-gray-200 px-4 py-2 rounded-xl mb-4"
               >
                 ← Back
               </button>
@@ -156,10 +229,14 @@ export default function Home() {
               {(selectedSubFolder.songs || []).map((song: any, i: number) => (
                 <div
                   key={i}
-                  className="bg-white p-4 rounded-xl shadow mb-4"
+                  className="bg-white p-4 rounded-xl shadow mb-4 cursor-pointer"
                   onClick={() => playSong(song)}
                 >
-                  <div className="font-semibold">{song.title}</div>
+
+                  <div className="font-semibold">
+                    {song.title}
+                  </div>
+
                 </div>
               ))}
 
@@ -167,42 +244,67 @@ export default function Home() {
           )}
 
           {/* FLAT FOLDER SONGS */}
-          {selectedFolder && selectedFolder.type === "flat" && (
-            <div className="p-4">
+          {selectedFolder &&
+            selectedFolder.type === "flat" && (
+              <div className="p-4">
 
-              <button
-                onClick={() => setSelectedFolder(null)}
-                className="text-blue-500 mb-4"
-              >
-                ← Back
-              </button>
-
-              {(selectedFolder.songs || []).map((song: any, i: number) => (
-                <div
-                  key={i}
-                  className="bg-white p-4 rounded-xl shadow mb-4"
-                  onClick={() => playSong(song)}
+                <button
+                  onClick={() => setSelectedFolder(null)}
+                  className="bg-gray-200 px-4 py-2 rounded-xl mb-4"
                 >
-                  <div className="font-semibold">{song.title}</div>
-                </div>
-              ))}
+                  ← Back
+                </button>
 
-            </div>
-          )}
+                {(selectedFolder.songs || []).map((song: any, i: number) => (
+                  <div
+                    key={i}
+                    className="bg-white p-4 rounded-xl shadow mb-4 cursor-pointer"
+                    onClick={() => playSong(song)}
+                  >
+
+                    <div className="font-semibold">
+                      {song.title}
+                    </div>
+
+                  </div>
+                ))}
+
+              </div>
+            )}
+
         </>
       )}
 
       {/* MINI PLAYER */}
       {currentSong && (
-        <div className="fixed bottom-14 left-0 right-0 bg-white border-t p-3 max-h-60 overflow-auto">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-3 max-h-60 overflow-auto">
 
-          <div className="font-semibold">{currentSong.title}</div>
+          <div className="font-semibold">
+            {currentSong.title}
+          </div>
 
-{currentSong.lyrics && (
-  <pre className="mt-2 text-sm text-gray-600 whitespace-pre-wrap">
-    {currentSong.lyrics}
-  </pre>
-)}
+          {currentSong.lyrics && (
+            <pre className="mt-2 text-sm text-gray-600 whitespace-pre-wrap">
+              {currentSong.lyrics}
+            </pre>
+          )}
+          <div className="flex gap-3 mt-3">
+
+  <button
+    onClick={playPreviousSong}
+    className="bg-gray-200 px-4 py-2 rounded-xl"
+  >
+    ⏮ Previous
+  </button>
+
+  <button
+    onClick={playNextSong}
+    className="bg-gray-200 px-4 py-2 rounded-xl"
+  >
+    Next ⏭
+  </button>
+
+</div>
 
           <audio
             ref={audioRef}
@@ -213,12 +315,6 @@ export default function Home() {
 
         </div>
       )}
-
-      {/* BOTTOM NAV */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-3">
-        <span>🏠 Home</span>
-        <span>🔍 Search</span>
-      </div>
 
     </div>
   )
