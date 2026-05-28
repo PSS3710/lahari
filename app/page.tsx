@@ -13,6 +13,9 @@ export default function Home() {
   const [activePage, setActivePage] = useState("home")
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const [editSong, setEditSong] = useState<any>(null)
+  const [editTitle, setEditTitle] = useState("")
+  const [editLyrics, setEditLyrics] = useState("")
 
   useEffect(() => {
     fetch("/songs.json")

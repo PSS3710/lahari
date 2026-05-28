@@ -115,7 +115,6 @@
       }
     ]
   },
-
   {
     "folder": "Roju oka Chinthana",
     "type": "flat",
@@ -141,10 +140,10 @@
         "lyrics": "NONE"
       },
       {
-  "title": "5.A proud donkey",
-  "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1779959337/8.A_proud_donkey_cmue0s.mp3",
-  "lyrics": "NONE"
-     },
+        "title": "5.A proud donkey",
+        "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1779959337/8.A_proud_donkey_cmue0s.mp3",
+        "lyrics": "NONE"
+      },
       {
         "title": "6.Anger is good sometimes ",
         "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1779959920/9.Anger_is_good_sometimes_hhdlw7.mp3",
@@ -174,16 +173,16 @@
         "title": "11.Learn to face sukam dhukam equally",
         "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1779959999/16.Learn_to_face_sukam_dhukam_equally_bh9njx.mp3",
         "lyrics": "NONE"
-      }, 
+      },
       {
         "title": "12.By Lakshmana s Help Sitha Put Garland To Rama",
         "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1779960007/17.ByLakshmana_sHelpSithaPutGarlandToRama_w7edpt.mp3",
         "lyrics": "NONE"
       },
       {
-        "title": "13.A frog in a lady s stomach",
+        "title": "13.A frog in a lady's stomach",
         "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1779960024/18.A_frog_in_a_lady_s_stomach_gt8g4r.mp3",
-        "lyrics": "NONE"
+        "lyrics": "not yet, will be done soon"
       },
       {
         "title": "14.Bhavanalo paripakvatha kalagali",
@@ -207,7 +206,6 @@
       }
     ]
   },
-
   {
     "folder": "Ashtakams and Sthothrams",
     "type": "flat",
@@ -219,7 +217,6 @@
       }
     ]
   },
-
   {
     "folder": "Shatakams",
     "type": "nested",
@@ -231,6 +228,13 @@
             "title": "Song X",
             "file": "/Shatakams/Sri Narasimha Shatakam/songX.mp3",
             "lyrics": "Lyrics not yet....Will be added"
+          },
+          {
+            "title": "Sri Narasimha Shatakam 1-10",
+            "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1779977207/Sri_Narasimha_Shatakam_1-10_y5yj60.mp3",
+            "lyrics": "Not yet, will be uploaded soon",
+            "folder": "Shatakams",
+            "subfolder": "Sri Narasimha Shatakam"
           }
         ]
       },
