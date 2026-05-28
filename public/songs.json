@@ -230,17 +230,7 @@
           {
             "title": "Song X",
             "file": "/Shatakams/Sri Narasimha Shatakam/songX.mp3",
-            "lyrics": "Lyrics X"
-          }
-        ]
-      },
-      {
-        "name": "Sri Krishna Shatakam",
-        "songs": [
-          {
-            "title": "Song Y",
-            "file": "/Shatakams/Sri Krishna Shatakam/songY.mp3",
-            "lyrics": "Lyrics Y"
+            "lyrics": "Lyrics not yet....Will be added"
           }
         ]
       },
@@ -248,9 +238,44 @@
         "name": "Sri Narayana Shatakam",
         "songs": [
           {
-            "title": "Song Z",
-            "file": "/Shatakams/Sri Narayana Shatakam/songZ.mp3",
-            "lyrics": "Lyrics Z"
+            "title": "Sri Narayana Shathakam 56-119",
+            "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1779964808/Sri_Narayana_Shathakam...56-119..till_last_fhl1u7.mp3",
+            "lyrics": "Lyrics not yet....Will be added"
+          },
+          {
+            "title": "Sri Narayana Shathakam 1-55",
+            "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1779964794/Sri_Narayana_Shathakam..1-55_Shlokams_nc60pd.mp3",
+            "lyrics": "Lyrics not yet....Will be added"
+          }
+        ]
+      },
+      {
+        "name": "Sri Krishna Shatakam",
+        "songs": [
+          {
+            "title": "Sri Krishna Shatakam 1-20",
+            "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1779965239/Sri_krishna_Shathakam_1-20_padyams_fsm9oq.mp3",
+            "lyrics": "Lyrics not yet....Will be added soon"
+          },
+          {
+            "title": "Sri Krishna Shatakam 21-40",
+            "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1779965234/Sri_krishna_Shathakam_21-40_Padyams_aign03.mp3",
+            "lyrics": "Lyrics not yet....Will be added soon"
+          },
+          {
+            "title": "Sri Krishna Shatakam 41-60",
+            "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1779965226/Sri_krishna_Shathakam_41-60_padyams_szl6tv.mp3",
+            "lyrics": "Lyrics not yet....Will be added soon"
+          },
+          {
+            "title": "Sri Krishna Shatakam 61-80",
+            "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1779965246/Sri_krishna_Shathakam_61-80_Padyams_wwo9r3.mp3",
+            "lyrics": "Lyrics not yet....Will be added soon"
+          },
+          {
+            "title": "Sri Krishna Shatakam 81-101",
+            "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1779965289/Sri_krishna_Shathakam_80-101padyams_mqwvm1.mp3",
+            "lyrics": "Lyrics not yet....Will be added soon"
           }
         ]
       }
