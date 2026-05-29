@@ -7,9 +7,9 @@
         "name": "Baba ",
         "songs": [
           {
-            "title": "Song 1",
-            "file": "/songs/f1/s1/song1.mp3",
-            "lyrics": "Lyrics 1"
+            "title": "Saayi Chalisa",
+            "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1780024473/SaayiChaalisa.._gmvpk8.mp3",
+            "lyrics": "Not yet, will be done soon"
           }
         ]
       },
@@ -17,8 +17,8 @@
         "name": "Devi Matha",
         "songs": [
           {
-            "title": "Song 1",
-            "file": "/songs/f1/s1/song1.mp3",
+            "title": "Yuga Yugaavatharini Devi Maa",
+            "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1780024491/YugaYugaavathariniDeviMaa_kqedsg.mp3",
             "lyrics": "Lyrics 1"
           }
         ]
@@ -27,8 +27,8 @@
         "name": "Ganesha",
         "songs": [
           {
-            "title": "Song 1",
-            "file": "/songs/f1/s1/song1.mp3",
+            "title": "Vishweshwara Putrane",
+            "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1780024507/VishweshwaraPutrane_ipt35v.mp3",
             "lyrics": "Lyrics 1"
           }
         ]
@@ -37,8 +37,8 @@
         "name": "Guru",
         "songs": [
           {
-            "title": "Song 1",
-            "file": "/songs/f1/s1/song1.mp3",
+            "title": "Shankara Guroo Jaya",
+            "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1780024523/ShankaraGurooJaya.._iycivy.mp3",
             "lyrics": "Lyrics 1"
           }
         ]
@@ -47,8 +47,8 @@
         "name": "Hanuman",
         "songs": [
           {
-            "title": "Song 1",
-            "file": "/songs/f1/s1/song1.mp3",
+            "title": "Vajrangi Dharisiha Hanumantha",
+            "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1780024597/VajrangiDharisihaHanumantha_aapnlk.mp3",
             "lyrics": "Lyrics 1"
           }
         ]
@@ -57,8 +57,8 @@
         "name": "Krishna",
         "songs": [
           {
-            "title": "Song 1",
-            "file": "/songs/f1/s1/song1.mp3",
+            "title": "Yamunateera Vihari",
+            "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1780024737/YamunateeraVihari.._ra1row.ogg",
             "lyrics": "Lyrics 1"
           }
         ]
@@ -67,8 +67,8 @@
         "name": "Lakshmi",
         "songs": [
           {
-            "title": "Song 1",
-            "file": "/songs/f1/s1/song1.mp3",
+            "title": "Yetlaninetthukondumma Varalskshmi",
+            "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1780024697/YetlaninetthukondummaVaralskshmi_ume9jl.mp3",
             "lyrics": "Lyrics 1"
           }
         ]
