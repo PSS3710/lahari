@@ -2,9 +2,15 @@
 
 import { useEffect, useState } from "react"
 
+const CLOUD_URL =
+  "https://res.cloudinary.com/dsvwf5ywy/raw/upload/v1780027280/songs_gxdsdg.json"
+
 export default function AdminPage() {
   const [data, setData] = useState<any[]>([])
   const [search, setSearch] = useState("")
+
+  const [password, setPassword] = useState("")
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const [title, setTitle] = useState("")
   const [file, setFile] = useState("")
@@ -16,57 +22,34 @@ export default function AdminPage() {
   const [editTitle, setEditTitle] = useState("")
   const [editLyrics, setEditLyrics] = useState("")
 
-  // LOAD FROM CLOUDINARY
+  // LOAD DATA
   useEffect(() => {
-    fetch("https://res.cloudinary.com/dsvwf5ywy/raw/upload/v1780027280/songs_gxdsdg.json")
+    fetch(CLOUD_URL)
       .then((res) => res.json())
       .then((json) => setData(json))
+      .catch((err) => console.log(err))
   }, [])
 
-  // FILTER SEARCH
-  const filteredData = data.map((folderItem: any) => {
-    if (folderItem.type === "flat") {
-      return {
-        ...folderItem,
-        songs: folderItem.songs.filter((s: any) =>
-          s.title.toLowerCase().includes(search.toLowerCase())
-        ),
-      }
-    }
-
-    if (folderItem.type === "nested") {
-      return {
-        ...folderItem,
-        subfolders: folderItem.subfolders.map((sub: any) => ({
-          ...sub,
-          songs: sub.songs.filter((s: any) =>
-            s.title.toLowerCase().includes(search.toLowerCase())
-          ),
-        })),
-      }
-    }
-
-    return folderItem
-  })
-
-  // SAVE TO CLOUDINARY
+  // SAVE TO CLOUDINARY (via API)
   const saveToCloud = async (updatedData: any) => {
-    await fetch("/api/save-songs", {
+    const res = await fetch("/api/save-songs", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ songs: updatedData }),
     })
 
-    setData(updatedData)
+    const result = await res.json()
+
+    if (result.success) {
+      alert("Saved successfully")
+    } else {
+      alert("Save failed")
+    }
   }
 
   // ADD SONG
   const addSong = async () => {
-    const newSong = {
-      title,
-      file,
-      lyrics,
-    }
+    const newSong = { title, file, lyrics }
 
     const updated = [...data]
 
@@ -80,9 +63,10 @@ export default function AdminPage() {
       })
     } else {
       if (subfolder) {
-        const subIndex = updated[folderIndex].subfolders.findIndex(
-          (s: any) => s.name === subfolder
-        )
+        const subIndex =
+          updated[folderIndex].subfolders?.findIndex(
+            (s: any) => s.name === subfolder
+          )
 
         if (subIndex !== -1) {
           updated[folderIndex].subfolders[subIndex].songs.push(newSong)
@@ -92,16 +76,19 @@ export default function AdminPage() {
       }
     }
 
+    setData(updated)
     await saveToCloud(updated)
   }
 
   // DELETE SONG
-  const deleteSong = async (songTitle: string) => {
+  const deleteSong = async (titleToDelete: string) => {
     const updated = data.map((folder: any) => {
       if (folder.type === "flat") {
         return {
           ...folder,
-          songs: folder.songs.filter((s: any) => s.title !== songTitle),
+          songs: folder.songs.filter(
+            (s: any) => s.title !== titleToDelete
+          ),
         }
       }
 
@@ -110,7 +97,9 @@ export default function AdminPage() {
           ...folder,
           subfolders: folder.subfolders.map((sub: any) => ({
             ...sub,
-            songs: sub.songs.filter((s: any) => s.title !== songTitle),
+            songs: sub.songs.filter(
+              (s: any) => s.title !== titleToDelete
+            ),
           })),
         }
       }
@@ -118,6 +107,7 @@ export default function AdminPage() {
       return folder
     })
 
+    setData(updated)
     await saveToCloud(updated)
   }
 
@@ -153,9 +143,46 @@ export default function AdminPage() {
     })
 
     setEditSong(null)
+    setData(updated)
     await saveToCloud(updated)
   }
 
+  // SEARCH FILTER
+  const filtered = data
+
+  // LOGIN SCREEN
+  if (!isLoggedIn) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="border p-6 w-80">
+          <h1 className="text-xl font-bold mb-4">Admin Login</h1>
+
+          <input
+            type="password"
+            placeholder="Enter password"
+            className="border p-2 w-full mb-3 text-black"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <button
+            className="bg-blue-500 text-white px-4 py-2 w-full"
+            onClick={() => {
+              if (password === "admin123") {
+                setIsLoggedIn(true)
+              } else {
+                alert("Wrong password")
+              }
+            }}
+          >
+            Login
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // MAIN ADMIN UI
   return (
     <div className="p-6">
 
@@ -171,82 +198,75 @@ export default function AdminPage() {
 
       {/* ADD SONG */}
       <div className="border p-4 mb-4">
-        <input placeholder="Title" className="border p-2 w-full mb-2"
-          value={title} onChange={(e) => setTitle(e.target.value)} />
+        <input
+          className="border p-2 w-full mb-2"
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
 
-        <input placeholder="File URL" className="border p-2 w-full mb-2"
-          value={file} onChange={(e) => setFile(e.target.value)} />
+        <input
+          className="border p-2 w-full mb-2"
+          placeholder="File URL"
+          value={file}
+          onChange={(e) => setFile(e.target.value)}
+        />
 
-        <input placeholder="Folder" className="border p-2 w-full mb-2"
-          value={folder} onChange={(e) => setFolder(e.target.value)} />
+        <input
+          className="border p-2 w-full mb-2"
+          placeholder="Folder"
+          value={folder}
+          onChange={(e) => setFolder(e.target.value)}
+        />
 
-        <input placeholder="Subfolder" className="border p-2 w-full mb-2"
-          value={subfolder} onChange={(e) => setSubfolder(e.target.value)} />
+        <input
+          className="border p-2 w-full mb-2"
+          placeholder="Subfolder"
+          value={subfolder}
+          onChange={(e) => setSubfolder(e.target.value)}
+        />
 
-        <textarea placeholder="Lyrics" className="border p-2 w-full mb-2"
-          value={lyrics} onChange={(e) => setLyrics(e.target.value)} />
+        <textarea
+          className="border p-2 w-full mb-2"
+          placeholder="Lyrics"
+          value={lyrics}
+          onChange={(e) => setLyrics(e.target.value)}
+        />
 
-        <button className="bg-green-500 text-white px-4 py-2" onClick={addSong}>
+        <button
+          className="bg-green-500 text-white px-4 py-2"
+          onClick={addSong}
+        >
           Add Song
         </button>
       </div>
 
       {/* SONG LIST */}
-      {filteredData.map((folder: any) =>
-        folder.type === "flat"
-          ? folder.songs.map((song: any) => (
-              <div key={song.title} className="border p-3 mb-2">
+      {filtered.map((folder: any) =>
+        folder.songs?.map((song: any) => (
+          <div key={song.title} className="border p-3 mb-2">
 
-                <div className="font-bold">{song.title}</div>
+            <div className="font-bold">{song.title}</div>
 
-                <button
-                  className="bg-blue-500 text-white px-2 py-1 mr-2"
-                  onClick={() => {
-                    setEditSong(song)
-                    setEditTitle(song.title)
-                    setEditLyrics(song.lyrics)
-                  }}
-                >
-                  Edit
-                </button>
+            <button
+              className="bg-blue-500 text-white px-2 py-1 mr-2"
+              onClick={() => {
+                setEditSong(song)
+                setEditTitle(song.title)
+                setEditLyrics(song.lyrics)
+              }}
+            >
+              Edit
+            </button>
 
-                <button
-                  className="bg-red-500 text-white px-2 py-1"
-                  onClick={() => deleteSong(song.title)}
-                >
-                  Delete
-                </button>
-
-              </div>
-            ))
-          : folder.subfolders?.map((sub: any) =>
-              sub.songs.map((song: any) => (
-                <div key={song.title} className="border p-3 mb-2">
-
-                  <div className="font-bold">{song.title}</div>
-                  <div className="text-sm">{sub.name}</div>
-
-                  <button
-                    className="bg-blue-500 text-white px-2 py-1 mr-2"
-                    onClick={() => {
-                      setEditSong(song)
-                      setEditTitle(song.title)
-                      setEditLyrics(song.lyrics)
-                    }}
-                  >
-                    Edit
-                  </button>
-
-                  <button
-                    className="bg-red-500 text-white px-2 py-1"
-                    onClick={() => deleteSong(song.title)}
-                  >
-                    Delete
-                  </button>
-
-                </div>
-              ))
-            )
+            <button
+              className="bg-red-500 text-white px-2 py-1"
+              onClick={() => deleteSong(song.title)}
+            >
+              Delete
+            </button>
+          </div>
+        ))
       )}
 
       {/* EDIT POPUP */}
