@@ -6,11 +6,11 @@ const CLOUD_URL =
   "https://res.cloudinary.com/dsvwf5ywy/raw/upload/v1780027280/songs_gxdsdg.json"
 
 export default function AdminPage() {
-  const [data, setData] = useState<any[]>([])
+  const [password, setPassword] = useState("")
+const [isLoggedIn, setIsLoggedIn] = useState(false)
+const [data, setData] = useState<any[]>([])
   const [search, setSearch] = useState("")
 
-  const [password, setPassword] = useState("")
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const [title, setTitle] = useState("")
   const [file, setFile] = useState("")
@@ -21,6 +21,7 @@ export default function AdminPage() {
   const [editSong, setEditSong] = useState<any>(null)
   const [editTitle, setEditTitle] = useState("")
   const [editLyrics, setEditLyrics] = useState("")
+  console.log("LOGIN STATE:", isLoggedIn)
 
   // LOAD DATA
   useEffect(() => {
