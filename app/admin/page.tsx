@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 
 const CLOUD_URL =
-  "https://res.cloudinary.com/dsvwf5ywy/raw/upload/v1780027280/songs_gxdsdg.json"
+  "https://res.cloudinary.com/dsvwf5ywy/raw/upload/v1780029606/songs_qauvv1.json"
 
 export default function AdminPage() {
   const [password, setPassword] = useState("")
