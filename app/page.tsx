@@ -29,12 +29,16 @@ export default function Home() {
     return
   }
 
-  fetch(currentSong.lyrics)
-    .then((res) => res.text())
-    .then((text) => setLyricsText(text))
-    .catch(() => {
-      setLyricsText("Lyrics could not be loaded")
-    })
+  if (currentSong.lyrics.startsWith("http")) {
+    fetch(currentSong.lyrics)
+      .then((res) => res.text())
+      .then((text) => setLyricsText(text))
+      .catch(() => {
+        setLyricsText("Lyrics could not be loaded")
+      })
+  } else {
+    setLyricsText(currentSong.lyrics)
+  }
 }, [currentSong])
 
   // SEARCH ALL SONGS

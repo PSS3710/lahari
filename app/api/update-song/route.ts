@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from "cloudinary"
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
   api_key: process.env.CLOUDINARY_KEY,
@@ -6,11 +7,11 @@ cloudinary.config({
 })
 
 export async function POST(req: Request) {
-  const body = await req.json()
-
-  const { updatedData } = body
-
   try {
+    const body = await req.json()
+
+    const { updatedData } = body
+
     const upload = await cloudinary.uploader.upload(
       "data:application/json;base64," +
         Buffer.from(JSON.stringify(updatedData)).toString("base64"),

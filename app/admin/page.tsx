@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 
 const CLOUD_URL =
-  "https://res.cloudinary.com/dsvwf5ywy/raw/upload/v1780207939/songs_yjg4k4.json"
+  "https://res.cloudinary.com/dsvwf5ywy/raw/upload/v1780212445/songs_fu56jn.json"
 
 export default function AdminPage() {
   const [password, setPassword] = useState("")
@@ -23,6 +23,12 @@ const [data, setData] = useState<any[]>([])
   const [editLyrics, setEditLyrics] = useState("")
   console.log("LOGIN STATE:", isLoggedIn)
 
+  useEffect(() => {
+  if (localStorage.getItem("adminLoggedIn") === "true") {
+    setIsLoggedIn(true)
+  }
+}, [])
+
   // LOAD DATA
   useEffect(() => {
     fetch(CLOUD_URL)
@@ -33,21 +39,26 @@ const [data, setData] = useState<any[]>([])
 
   // SAVE TO CLOUDINARY (via API)
   const saveToCloud = async (updatedData: any) => {
-    const res = await fetch("/api/save-songs", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ songs: updatedData }),
-    })
+  console.log("Saving started")
 
-    const result = await res.json()
+  const res = await fetch("/api/save-song", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ songs: updatedData }),
+  })
 
-    if (result.success) {
-      alert("Saved successfully")
-    } else {
-      alert("Save failed")
-    }
+  console.log("Response status:", res.status)
+
+  const result = await res.json()
+
+  console.log("Result:", result)
+
+  if (result.success) {
+    alert("Saved successfully")
+  } else {
+    alert("Save failed")
   }
-
+}
   // ADD SONG
   const addSong = async () => {
     const newSong = { title, file, lyrics }
@@ -69,26 +80,41 @@ const [data, setData] = useState<any[]>([])
             (s: any) => s.name === subfolder
           )
 
-        if (subIndex !== -1) {
-          updated[folderIndex].subfolders[subIndex].songs.push(newSong)
-        }
+        if (subIndex === -1) {
+  updated[folderIndex].subfolders.push({
+    name: subfolder,
+    songs: [newSong],
+  })
+} else {
+  updated[folderIndex].subfolders[subIndex].songs.push(newSong)
+}
       } else {
-        updated[folderIndex].songs.push(newSong)
+        if (!updated[folderIndex].songs) {
+  updated[folderIndex].songs = []
+}
+
+updated[folderIndex].songs.push(newSong)
       }
     }
 
     setData(updated)
     await saveToCloud(updated)
+
+setTitle("")
+setFile("")
+setLyrics("")
+setFolder("")
+setSubfolder("")
   }
 
   // DELETE SONG
-  const deleteSong = async (titleToDelete: string) => {
+  const deleteSong = async (fileToDelete: string) => {
     const updated = data.map((folder: any) => {
       if (folder.type === "flat") {
         return {
           ...folder,
           songs: folder.songs.filter(
-            (s: any) => s.title !== titleToDelete
+            (s: any) => s.file !== fileToDelete
           ),
         }
       }
@@ -99,7 +125,7 @@ const [data, setData] = useState<any[]>([])
           subfolders: folder.subfolders.map((sub: any) => ({
             ...sub,
             songs: sub.songs.filter(
-              (s: any) => s.title !== titleToDelete
+              (s: any) => s.file !== fileToDelete
             ),
           })),
         }
@@ -119,7 +145,7 @@ const [data, setData] = useState<any[]>([])
         return {
           ...folder,
           songs: folder.songs.map((s: any) =>
-            s.title === editSong.title
+            s.file === editSong.file
               ? { ...s, title: editTitle, lyrics: editLyrics }
               : s
           ),
@@ -149,7 +175,27 @@ const [data, setData] = useState<any[]>([])
   }
 
   // SEARCH FILTER
-  const filtered = data
+  const allSongs = data.flatMap((folder: any) => {
+  if (folder.type === "nested") {
+    return folder.subfolders.flatMap((sub: any) =>
+      sub.songs.map((song: any) => ({
+        ...song,
+        folder: folder.folder,
+        subfolder: sub.name,
+      }))
+    )
+  }
+
+  return folder.songs.map((song: any) => ({
+    ...song,
+    folder: folder.folder,
+    subfolder: "",
+  }))
+})
+
+const filtered = allSongs.filter((song: any) =>
+  song.title.toLowerCase().includes(search.toLowerCase())
+)
 
   // LOGIN SCREEN
   if (!isLoggedIn) {
@@ -170,6 +216,7 @@ const [data, setData] = useState<any[]>([])
             className="bg-blue-500 text-white px-4 py-2 w-full"
             onClick={() => {
               if (password === "admin123") {
+                localStorage.setItem("adminLoggedIn", "true")
                 setIsLoggedIn(true)
               } else {
                 alert("Wrong password")
@@ -243,32 +290,38 @@ const [data, setData] = useState<any[]>([])
       </div>
 
       {/* SONG LIST */}
-      {filtered.map((folder: any) =>
-        folder.songs?.map((song: any) => (
-          <div key={song.title} className="border p-3 mb-2">
+{filtered.map((song: any) => (
+  <div key={`${song.file}-${song.title}`} className="border p-3 mb-2">
 
-            <div className="font-bold">{song.title}</div>
+    <div className="font-bold">
+      {song.title}
+    </div>
 
-            <button
-              className="bg-blue-500 text-white px-2 py-1 mr-2"
-              onClick={() => {
-                setEditSong(song)
-                setEditTitle(song.title)
-                setEditLyrics(song.lyrics)
-              }}
-            >
-              Edit
-            </button>
+    <div className="text-sm text-gray-500 mb-2">
+      {song.folder}
+      {song.subfolder ? ` → ${song.subfolder}` : ""}
+    </div>
 
-            <button
-              className="bg-red-500 text-white px-2 py-1"
-              onClick={() => deleteSong(song.title)}
-            >
-              Delete
-            </button>
-          </div>
-        ))
-      )}
+    <button
+      className="bg-blue-500 text-white px-2 py-1 mr-2"
+      onClick={() => {
+        setEditSong(song)
+        setEditTitle(song.title)
+        setEditLyrics(song.lyrics)
+      }}
+    >
+      Edit
+    </button>
+
+    <button
+      className="bg-red-500 text-white px-2 py-1"
+      onClick={() => deleteSong(song.file)}
+    >
+      Delete
+    </button>
+
+  </div>
+))}
 
       {/* EDIT POPUP */}
       {editSong && (

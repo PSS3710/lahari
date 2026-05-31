@@ -10,11 +10,20 @@ export async function POST(req: Request) {
   try {
     const body = await req.json()
 
-    const { updatedData } = body
+    // your frontend sends: { songs: updatedData }
+    const updatedData = body.songs
+
+    if (!updatedData) {
+      return Response.json({
+        success: false,
+        error: "No song data received",
+      })
+    }
+
+    const base64 = Buffer.from(JSON.stringify(updatedData)).toString("base64")
 
     const upload = await cloudinary.uploader.upload(
-      "data:application/json;base64," +
-        Buffer.from(JSON.stringify(updatedData)).toString("base64"),
+      "data:application/json;base64," + base64,
       {
         resource_type: "raw",
         public_id: "songs",
