@@ -16,12 +16,26 @@ export default function Home() {
   const [editSong, setEditSong] = useState<any>(null)
   const [editTitle, setEditTitle] = useState("")
   const [editLyrics, setEditLyrics] = useState("")
+  const [lyricsText, setLyricsText] = useState("")
 
   useEffect(() => {
     fetch("/songs.json")
       .then((res) => res.json())
       .then((json) => setData(json))
   }, [])
+  useEffect(() => {
+  if (!currentSong?.lyrics) {
+    setLyricsText("")
+    return
+  }
+
+  fetch(currentSong.lyrics)
+    .then((res) => res.text())
+    .then((text) => setLyricsText(text))
+    .catch(() => {
+      setLyricsText("Lyrics could not be loaded")
+    })
+}, [currentSong])
 
   // SEARCH ALL SONGS
   const allSongs = data.flatMap((folder: any) => {
@@ -286,9 +300,9 @@ function playPreviousSong() {
             {currentSong.title}
           </div>
 
-          {currentSong.lyrics && (
+          {lyricsText && (
             <pre className="mt-2 text-sm text-gray-600 whitespace-pre-wrap">
-              {currentSong.lyrics}
+              {lyricsText}
             </pre>
           )}
           <div className="flex gap-3 mt-3">
