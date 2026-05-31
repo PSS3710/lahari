@@ -6,62 +6,49 @@ export async function POST(req: Request) {
     const body = await req.json()
 
     const filePath = path.join(process.cwd(), "public/songs.json")
+    const data = JSON.parse(readFileSync(filePath, "utf-8"))
 
-    // read existing data safely
-    const rawData = readFileSync(filePath, "utf-8")
-    const data = JSON.parse(rawData)
+    const { file, action, newTitle, newLyrics } = body
 
-    const newSong = {
-      title: body.title,
-      file: body.file,
-      lyrics: body.lyrics,
-      folder: body.folder,
-      subfolder: body.subfolder || "",
-    }
+    for (const folder of data) {
+      if (folder.type === "nested") {
+        for (const sub of folder.subfolders) {
+          const song = sub.songs.find((s: any) => s.file === file)
 
-    // find folder
-    const folderIndex = data.findIndex(
-      (f: any) => f.folder === body.folder
-    )
+          if (song) {
+            if (action === "delete") {
+              sub.songs = sub.songs.filter((s: any) => s.file !== file)
+            }
 
-    if (folderIndex === -1) {
-      return Response.json({
-        success: false,
-        error: "Folder not found",
-      })
-    }
+            if (action === "edit") {
+              if (newTitle !== undefined) song.title = newTitle
+              if (newLyrics !== undefined) song.lyrics = newLyrics
+            }
+          }
+        }
+      } else {
+        const song = folder.songs.find((s: any) => s.file === file)
 
-    const folder = data[folderIndex]
+        if (song) {
+          if (action === "delete") {
+            folder.songs = folder.songs.filter((s: any) => s.file !== file)
+          }
 
-    // nested folder logic
-    if (folder.type === "nested") {
-      const sub = folder.subfolders.find(
-        (s: any) => s.name === body.subfolder
-      )
-
-      if (!sub) {
-        return Response.json({
-          success: false,
-          error: "Subfolder not found",
-        })
+          if (action === "edit") {
+            if (newTitle !== undefined) song.title = newTitle
+            if (newLyrics !== undefined) song.lyrics = newLyrics
+          }
+        }
       }
-
-      sub.songs.push(newSong)
-    } else {
-      // flat folder logic
-      folder.songs.push(newSong)
     }
 
-    // write updated file
     writeFileSync(filePath, JSON.stringify(data, null, 2))
 
     return Response.json({ success: true })
   } catch (err: any) {
-    console.log("API ERROR:", err)
-
     return Response.json({
       success: false,
-      error: err?.message || "Something went wrong",
+      error: err.message,
     })
   }
 }

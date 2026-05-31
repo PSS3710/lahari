@@ -67,7 +67,7 @@
         "name": "Lakshmi",
         "songs": [
           {
-            "title": "Yetlaninetthukondumma Varalskshmi",
+            "title": "Yetlaninetthukondumma Varalakshmi",
             "file": "https://res.cloudinary.com/dsvwf5ywy/video/upload/v1780024697/YetlaninetthukondummaVaralskshmi_ume9jl.mp3",
             "lyrics": "Lyrics 1"
           }
@@ -99,7 +99,7 @@
           {
             "title": "Govinda eni koluvare",
             "file": "/songs/Vishnu/govinda govida eni koluvare.mp3",
-            "lyrics": "Lyrics 1"
+            "lyrics": "https://res.cloudinary.com/dsvwf5ywy/raw/upload/v1780201841/Govinda_Govinda_eni_Koluvare_l7uxwd.docx"
           }
         ]
       },
