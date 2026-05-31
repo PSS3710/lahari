@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 
 const CLOUD_URL =
   "https://res.cloudinary.com/dsvwf5ywy/raw/upload/v1780212445/songs_fu56jn.json"
-
 export default function AdminPage() {
   const [password, setPassword] = useState("")
 const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -31,7 +30,7 @@ const [data, setData] = useState<any[]>([])
 
   // LOAD DATA
   useEffect(() => {
-    fetch(CLOUD_URL)
+    fetch(CLOUD_URL + "?t=" + Date.now())
       .then((res) => res.json())
       .then((json) => setData(json))
       .catch((err) => console.log(err))
@@ -99,6 +98,11 @@ updated[folderIndex].songs.push(newSong)
 
     setData(updated)
     await saveToCloud(updated)
+    const reloadData = async () => {
+  const res = await fetch(CLOUD_URL + "?t=" + Date.now())
+  const json = await res.json()
+  setData(json)
+}
 
 setTitle("")
 setFile("")
