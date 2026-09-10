@@ -26,7 +26,7 @@ export async function POST(req: Request) {
       "data:application/json;base64," + base64,
       {
         resource_type: "raw",
-        public_id: "songs",
+        public_id: "songs_zdzvpz.json", 
         overwrite: true,
       }
     )

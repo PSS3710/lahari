@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 
 const CLOUD_URL =
-  "https://res.cloudinary.com/dsvwf5ywy/raw/upload/v1781879110/songs_zdzvpz.json"
+  "https://res.cloudinary.com/dsvwf5ywy/raw/upload/songs_zdzvpz.json"
 
 export default function AdminPage() {
   const [password, setPassword] = useState("")
@@ -206,17 +206,24 @@ export default function AdminPage() {
           />
 
           <button
-            className="bg-blue-500 text-white px-4 py-2 w-full"
-            onClick={() => {
-              if (password === "admin123") {
-                localStorage.setItem("admin", "true")
-                setIsLoggedIn(true)
-              } else {
-                alert("Wrong password")
-              }
-            }}
-          >
-            Login
+              className="bg-blue-500 text-white px-4 py-2 w-full"
+              onClick={async () => {
+                const res = await fetch("/api/admin-login", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ password }),
+                })
+                const result = await res.json()
+
+                if (result.success) {
+                  localStorage.setItem("admin", "true")
+                  setIsLoggedIn(true)
+                } else {
+                  alert("Wrong password")
+                }
+              }}
+            >
+              Login
           </button>
         </div>
       </div>

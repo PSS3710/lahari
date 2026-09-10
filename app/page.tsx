@@ -1,6 +1,8 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
+  const CLOUD_URL =
+    "https://res.cloudinary.com/dsvwf5ywy/raw/upload/songs_zdzvpz.json"
 
 export default function Home() {
   const [data, setData] = useState<any[]>([])
@@ -19,10 +21,11 @@ export default function Home() {
   const [lyricsText, setLyricsText] = useState("")
 
   useEffect(() => {
-    fetch("/songs.json")
-      .then((res) => res.json())
-      .then((json) => setData(json))
-  }, [])
+      fetch(CLOUD_URL + "?t=" + Date.now())
+        .then((res) => res.text())
+        .then((text) => setData(JSON.parse(text)))
+        .catch(() => setData([]))
+    }, [])
   useEffect(() => {
   if (!currentSong?.lyrics) {
     setLyricsText("")
