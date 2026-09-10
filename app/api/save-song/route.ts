@@ -28,6 +28,7 @@ export async function POST(req: Request) {
         resource_type: "raw",
         public_id: "songs_zdzvpz.json", 
         overwrite: true,
+        invalidate: true,
       }
     )
 
