@@ -22,13 +22,6 @@ export default function AdminPage() {
   const [editTitle, setEditTitle] = useState("")
   const [editLyrics, setEditLyrics] = useState("")
 
-  // LOGIN STATE (optional persistence)
-  useEffect(() => {
-    if (localStorage.getItem("admin") === "true") {
-      setIsLoggedIn(true)
-    }
-  }, [])
-
   // LOAD DATA
   useEffect(() => {
     const load = async () => {
@@ -216,7 +209,6 @@ export default function AdminPage() {
                 const result = await res.json()
 
                 if (result.success) {
-                  localStorage.setItem("admin", "true")
                   setIsLoggedIn(true)
                 } else {
                   alert("Wrong password")
