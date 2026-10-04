@@ -252,11 +252,60 @@ export default function AdminPage() {
         <input placeholder="File" className="border p-2 w-full mb-2"
           value={file} onChange={(e) => setFile(e.target.value)} />
 
-        <input placeholder="Folder" className="border p-2 w-full mb-2"
-          value={folder} onChange={(e) => setFolder(e.target.value)} />
+        <select
+  className="border p-2 w-full mb-2"
+  value={folder}
+  onChange={(e) => {
+    setFolder(e.target.value)
+    setSubfolder("")
+  }}
+>
+  <option value="">-- Select Folder --</option>
+  {data.map((f: any, i: number) => (
+    <option key={i} value={f.folder}>{f.folder}</option>
+  ))}
+  <option value="__new__">+ Add New Folder</option>
+</select>
 
-        <input placeholder="Subfolder" className="border p-2 w-full mb-2"
-          value={subfolder} onChange={(e) => setSubfolder(e.target.value)} />
+{folder === "__new__" && (
+  <input
+    placeholder="Type new folder name"
+    className="border p-2 w-full mb-2"
+    onChange={(e) => setFolder(e.target.value)}
+  />
+)}
+
+{(() => {
+  const selectedFolderData = data.find((f: any) => f.folder === folder)
+  const subfolderOptions =
+    selectedFolderData?.type === "nested"
+      ? selectedFolderData.subfolders || []
+      : []
+
+  return (
+    <>
+      <select
+        className="border p-2 w-full mb-2"
+        value={subfolder}
+        onChange={(e) => setSubfolder(e.target.value)}
+      >
+        <option value="">-- No Subfolder --</option>
+        {subfolderOptions.map((sf: any, i: number) => (
+          <option key={i} value={sf.name}>{sf.name}</option>
+        ))}
+        <option value="__new__">+ Add New Subfolder</option>
+      </select>
+
+      {subfolder === "__new__" && (
+        <input
+          placeholder="Type new subfolder name"
+          className="border p-2 w-full mb-2"
+          onChange={(e) => setSubfolder(e.target.value)}
+        />
+      )}
+    </>
+  )
+})()}
 
         <textarea placeholder="Lyrics" className="border p-2 w-full mb-2"
           value={lyrics} onChange={(e) => setLyrics(e.target.value)} />
