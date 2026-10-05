@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "Lahari Annapoorna",
   description: "The official digital archive of Annapoorna's music. Explore a beautiful collection of her original songs and sayings.",
   icons: {
-    icon: "/backdrop(2).ico?v=1", // <-- Adding ?v=1 forces browsers to download it fresh
+    icon: "/backdrop (2).ico?v=1", // <-- Adding ?v=1 forces browsers to download it fresh
   },
 };
 
