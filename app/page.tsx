@@ -98,10 +98,7 @@ function playPreviousSong() {
 }
 
   return (
-    <div
-  className="min-h-screen text-gray-900 pb-32 bg-cover bg-center bg-no-repeat"
-  style={{ backgroundImage: "url('/Lahari Backdrop.jpg')" }}
->
+    <div className="min-h-screen bg-gray-50 text-gray-900 pb-32">
 
       {/* HEADER */}
       <div className="p-4 bg-white border-b flex items-center justify-center gap-3">
