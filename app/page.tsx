@@ -10,7 +10,7 @@ const C = {
   card: "#FFFFFF",
   line: "#E8D9BF",
   gold: "#C98A3E",
-  maroon: "#5B1F1F",
+  maroon: "#f05c22",
   cream: "#F4E3C1",
   text: "#3A1F18",
   soft: "#8A6A4A",
