@@ -12,8 +12,9 @@ const C = {
   gold: "#C98A3E",
   maroon: "#6e2828",
   cream: "#F4E3C1",
-  text: "#f05c22",
+  text: "#3a0404",
   soft: "#8A6A4A",
+  lyricbg: "#e25b26",
 }
  
 function FolderCard({ label, onClick }: { label: string; onClick: () => void }) {
@@ -332,7 +333,7 @@ export default function Home() {
       {currentSong && (
         <div
           className="fixed bottom-0 left-0 right-0 p-3"
-          style={{ background: C.maroon, color: C.cream }}
+          style={{ background: C.lyricbg, color: C.cream }}
         >
           <div className="mx-auto max-w-3xl">
             <div className="text-lg">{currentSong.title}</div>
