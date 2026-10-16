@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next'
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Lahari Annapoorna',
-    short_name: 'Annapoorna',
+    short_name: 'Lahari Annapoorna',
     description: "The official digital archive of Annapoorna's music. Explore a beautiful collection of her original songs and sayings.",
     start_url: '/',
     display: 'standalone',
