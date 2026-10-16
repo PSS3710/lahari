@@ -21,6 +21,8 @@ export default function AdminPage() {
   const [editSong, setEditSong] = useState<any>(null)
   const [editTitle, setEditTitle] = useState("")
   const [editLyrics, setEditLyrics] = useState("")
+  const [lyricsTamil, setLyricsTamil] = useState("")
+  const [editLyricsTamil, setEditLyricsTamil] = useState("")
 
   // LOAD DATA
   useEffect(() => {
@@ -76,7 +78,7 @@ export default function AdminPage() {
 
   // ADD SONG
   const addSong = async () => {
-    const newSong = { title, file, lyrics }
+    const newSong = { title, file, lyrics, lyricsTamil }
 
     const updated = [...data]
 
@@ -117,6 +119,7 @@ export default function AdminPage() {
     setTitle("")
     setFile("")
     setLyrics("")
+    setLyricsTamil("")
     setFolder("")
     setSubfolder("")
   }
@@ -156,7 +159,7 @@ export default function AdminPage() {
           ...folder,
           songs: folder.songs.map((s: any) =>
             s.file === editSong.file
-              ? { ...s, title: editTitle, lyrics: editLyrics }
+              ? { ...s, title: editTitle, lyrics: editLyrics, lyricsTamil: editLyricsTamil }
               : s
           ),
         }
@@ -169,7 +172,7 @@ export default function AdminPage() {
             ...sub,
             songs: sub.songs.map((s: any) =>
               s.file === editSong.file
-                ? { ...s, title: editTitle, lyrics: editLyrics }
+                ? { ...s, title: editTitle, lyrics: editLyrics, lyricsTamil: editLyricsTamil }
                 : s
             ),
           })),
@@ -299,8 +302,11 @@ export default function AdminPage() {
   )
 })()}
 
-        <textarea placeholder="Lyrics" className="border p-2 w-full mb-2"
+        <textarea placeholder="English lyrics (paste text, or a link to the .txt file)" className="border p-2 w-full mb-2"
           value={lyrics} onChange={(e) => setLyrics(e.target.value)} />
+
+        <textarea placeholder="Tamil lyrics (paste text, or a link to the .txt file)" className="border p-2 w-full mb-2"
+          value={lyricsTamil} onChange={(e) => setLyricsTamil(e.target.value)} />
 
         <button className="bg-green-500 text-white px-4 py-2" onClick={addSong}>
           Add Song
@@ -327,7 +333,8 @@ export default function AdminPage() {
               onClick={() => {
                 setEditSong(song)
                 setEditTitle(song.title)
-                setEditLyrics(song.lyrics)
+                setEditLyrics(song.lyrics || "")
+                setEditLyricsTamil(song.lyricsTamil || "")
               }}
             >
               Edit
@@ -344,15 +351,19 @@ export default function AdminPage() {
 
       {/* EDIT MODAL */}
       {editSong && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white p-4 border-t text-black">
+        <div className="fixed bottom-0 left-0 right-0 bg-white p-4 border-t text-black max-h-[70vh] overflow-auto">
 
           <input className="border p-2 w-full mb-2"
             value={editTitle}
             onChange={(e) => setEditTitle(e.target.value)} />
 
-          <textarea className="border p-2 w-full mb-2"
+          <textarea className="border p-2 w-full mb-2" placeholder="English lyrics"
             value={editLyrics}
             onChange={(e) => setEditLyrics(e.target.value)} />
+
+          <textarea className="border p-2 w-full mb-2" placeholder="Tamil lyrics"
+            value={editLyricsTamil}
+            onChange={(e) => setEditLyricsTamil(e.target.value)} />
 
           <button className="bg-green-500 px-4 py-2 text-white mr-2"
             onClick={updateSong}>
@@ -365,7 +376,6 @@ export default function AdminPage() {
           </button>
         </div>
       )}
-
     </div>
   )
 }

@@ -81,6 +81,7 @@ export default function Home() {
  
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [lyricsText, setLyricsText] = useState("")
+  const [lyricsLang, setLyricsLang] = useState<"english" | "tamil">("english")
  
   useEffect(() => {
     fetch(CLOUD_URL + "?t=" + Date.now())
@@ -90,20 +91,27 @@ export default function Home() {
   }, [])
  
   useEffect(() => {
-    if (!currentSong?.lyrics) {
-      setLyricsText("")
-      return
-    }
- 
-    if (currentSong.lyrics.startsWith("http")) {
-      fetch(currentSong.lyrics)
-        .then((res) => res.text())
-        .then((text) => setLyricsText(text))
-        .catch(() => setLyricsText("Lyrics could not be loaded"))
-    } else {
-      setLyricsText(currentSong.lyrics)
-    }
-  }, [currentSong])
+  const source =
+    lyricsLang === "tamil" ? currentSong?.lyricsTamil : currentSong?.lyrics
+
+  if (!source) {
+    setLyricsText(
+      lyricsLang === "tamil" && currentSong
+        ? "Tamil lyrics not available yet"
+        : ""
+    )
+    return
+  }
+
+  if (source.startsWith("http")) {
+    fetch(source)
+      .then((res) => res.text())
+      .then((text) => setLyricsText(text))
+      .catch(() => setLyricsText("Lyrics could not be loaded"))
+  } else {
+    setLyricsText(source)
+  }
+}, [currentSong, lyricsLang])
  
   const allSongs = data.flatMap((folder: any) => {
     if (folder.type === "nested") {
@@ -337,6 +345,28 @@ export default function Home() {
         >
           <div className="mx-auto max-w-3xl">
             <div className="text-lg">{currentSong.title}</div>
+            <div className="mt-2 flex gap-2">
+  {[
+    { k: "english", l: "English" },
+    { k: "tamil", l: "Tamil" },
+  ].map((o) => {
+    const on = lyricsLang === o.k
+    return (
+      <button
+        key={o.k}
+        onClick={() => setLyricsLang(o.k as "english" | "tamil")}
+        className="rounded-full px-4 py-1 text-sm"
+        style={{
+          background: on ? C.cream : "transparent",
+          color: on ? C.maroon : C.cream,
+          border: `1px solid ${C.gold}`,
+        }}
+      >
+        {o.l}
+      </button>
+    )
+  })}
+</div>
  
             {lyricsText && (
               <pre

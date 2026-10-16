@@ -7,13 +7,18 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "The official digital archive of Annapoorna's music. Explore a beautiful collection of her original songs and sayings.",
     start_url: '/',
     display: 'standalone',
-    background_color: '#ffffff',
-    theme_color: '#000000',
+    background_color: '#FBF6EE',
+    theme_color: '#5B1F1F',
     icons: [
       {
-        src: '/backdrop (2).ico',
-        sizes: '256x256',
-        type: 'image/x-icon',
+        src: '/backdropp192.png',
+        sizes: '192x192',
+        type: 'image/png',
+      },
+      {
+        src: '/backdropp512.png',
+        sizes: '512x512',
+        type: 'image/png',
       },
     ],
   }
