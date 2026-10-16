@@ -13,12 +13,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lahari Annapoorna",
-  description: "The official digital archive of Annapoorna's music. Explore a beautiful collection of her original songs and sayings.",
+  title: "Lahari",
+  description: "Songs of devotion, in loving memory",
   icons: {
-    icon: "/backdropp512.png?v=1", // <-- Adding ?v=1 forces browsers to download it fresh
+    icon: [
+      { url: "/backdropp192.png", sizes: "192x192", type: "image/png" },
+      { url: "/backdropp512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/backdropp192.png",
   },
-};
+}
 
 export default function RootLayout({
   children,
