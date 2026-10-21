@@ -38,6 +38,14 @@ export default function AdminPage() {
   // EDIT MODE: the original audio link identifies the song being edited
   const [editingFile, setEditingFile] = useState<string | null>(null)
   const [editOrigin, setEditOrigin] = useState({ folder: "", subfolder: "" })
+  const [editOriginal, setEditOriginal] = useState({
+    file: "",
+    lyrics: "",
+    lyricsTamil: "",
+  })
+ 
+  // Files uploaded or imported in the current form, not saved yet
+  const [sessionUploads, setSessionUploads] = useState<string[]>([])
  
   // LOAD DATA
   useEffect(() => {
@@ -161,6 +169,8 @@ export default function AdminPage() {
     if (kind === "audio") setFile(url)
     if (kind === "english") setLyrics(url)
     if (kind === "tamil") setLyricsTamil(url)
+ 
+    setSessionUploads((prev) => [...prev, url])
   }
  
   const processFile = async (f: File, kind: Kind) => {
@@ -721,4 +731,3 @@ export default function AdminPage() {
     </div>
   )
 }
- 
