@@ -128,22 +128,20 @@ export default function Home() {
   }
 }, [currentSong, lyricsLang])
  
-  const allSongs = data.flatMap((folder: any) => {
-    if (folder.type === "nested") {
-      return (folder.subfolders || []).flatMap((sf: any) =>
-        (sf.songs || []).map((song: any) => ({
-          ...song,
-          folder: folder.folder,
-          subfolder: sf.name,
-        }))
-      )
-    }
- 
-    return (folder.songs || []).map((song: any) => ({
-      ...song,
-      folder: folder.folder,
-    }))
-  })
+  const allSongs = data.flatMap((folder: any) => [
+     ...(folder.songs || []).map((song: any) => ({
+       ...song,
+       folder: folder.folder,
+       subfolder: "",
+     })),
+     ...(folder.subfolders || []).flatMap((sf: any) =>
+       (sf.songs || []).map((song: any) => ({
+         ...song,
+         folder: folder.folder,
+         subfolder: sf.name,
+       }))
+     ),
+   ])
  
   const filteredSongs = allSongs.filter((song: any) =>
     (song.title || "").toLowerCase().includes(search.toLowerCase())
