@@ -9,24 +9,25 @@ cloudinary.config({
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-
-    // your frontend sends: { songs: updatedData }
     const updatedData = body.songs
 
-    if (!updatedData) {
-      return Response.json({
-        success: false,
-        error: "No song data received",
-      })
+    if (!Array.isArray(updatedData)) {
+      return Response.json(
+        { success: false, error: "Invalid song data received" },
+        { status: 400 }
+      )
     }
 
-    const base64 = Buffer.from(JSON.stringify(updatedData)).toString("base64")
+    const base64 = Buffer.from(
+      JSON.stringify(updatedData),
+      "utf-8"
+    ).toString("base64")
 
     const upload = await cloudinary.uploader.upload(
       "data:application/json;base64," + base64,
       {
         resource_type: "raw",
-        public_id: "songs_zdzvpz.json", 
+        public_id: "songs_zdzvpz.json",
         overwrite: true,
         invalidate: true,
       }
@@ -37,9 +38,14 @@ export async function POST(req: Request) {
       url: upload.secure_url,
     })
   } catch (err: any) {
-    return Response.json({
-      success: false,
-      error: err.message,
-    })
+    console.error("Cloudinary save error:", err)
+
+    return Response.json(
+      {
+        success: false,
+        error: err.message || "Could not save song data",
+      },
+      { status: 500 }
+    )
   }
 }

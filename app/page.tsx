@@ -82,6 +82,7 @@ export default function Home() {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [lyricsText, setLyricsText] = useState("")
   const [lyricsLang, setLyricsLang] = useState<"english" | "tamil">("english")
+  const [showSplash, setShowSplash] = useState(false)
  
   useEffect(() => {
     fetch(CLOUD_URL + "?t=" + Date.now())
@@ -89,6 +90,20 @@ export default function Home() {
       .then((text) => setData(JSON.parse(text)))
       .catch(() => setData([]))
   }, [])
+
+  useEffect(() => {
+  const standalone =
+    window.matchMedia("(display-mode: standalone)").matches ||
+    (window.navigator as any).standalone === true
+  const forced =
+    new URLSearchParams(window.location.search).get("splash") === "1"
+
+  if (standalone || forced) {
+    setShowSplash(true)
+    const t = setTimeout(() => setShowSplash(false), 2200)
+    return () => clearTimeout(t)
+  }
+}, [])
  
   useEffect(() => {
   const source =
@@ -181,6 +196,25 @@ export default function Home() {
       className="min-h-screen pb-80 font-serif"
       style={{ background: C.bg, color: C.text }}
     >
+    {showSplash && (
+      <div
+        className="fixed inset-0 z-50 flex flex-col items-center justify-center px-6 text-center"
+        style={{ background: C.bg }}
+      >
+        <img
+          src="/backdropp192.png"
+          alt=""
+          className="h-32 w-32 rounded-full object-cover"
+          style={{ border: `3px solid ${C.gold}` }}
+        />
+        <h1 className="mt-5 text-4xl font-medium" style={{ color: C.maroon }}>
+          Lahari Annapoorna
+        </h1>
+        <p className="mt-2 text-base" style={{ color: C.soft }}>
+          Songs of devotion, in loving memory
+        </p>
+      </div>
+    )}  
       {/* HEADER */}
       <div
         className="px-4 pt-8 pb-5 text-center"

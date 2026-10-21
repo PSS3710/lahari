@@ -25,6 +25,8 @@ export default function AdminPage() {
   const [newFolder, setNewFolder] = useState("")
   const [newSubfolder, setNewSubfolder] = useState("")
   const [uploadMsg, setUploadMsg] = useState("")
+  const [driveLinks, setDriveLinks] = useState({ audio: "", english: "", tamil: "" })
+  const [dragging, setDragging] = useState("")
  
   const [editSong, setEditSong] = useState<any>(null)
   const [editTitle, setEditTitle] = useState("")
@@ -77,19 +79,30 @@ export default function AdminPage() {
  
   // SAVE TO CLOUD
   const saveToCloud = async (updatedData: any) => {
+  try {
     const res = await fetch("/api/save-song", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ songs: updatedData }),
     })
- 
+
     const result = await res.json()
-    console.log(result)
- 
-    if (!result.success) {
-      alert("Save failed")
+
+    if (!res.ok || !result.success) {
+      console.error("Save failed:", result)
+      alert("Save failed: " + (result.error || "Unknown error"))
+      return false
     }
+
+    console.log("Saved JSON URL:", result.url)
+    alert("Saved successfully")
+    return true
+  } catch (err) {
+    console.error("Save request failed:", err)
+    alert("Could not contact the save API")
+    return false
   }
+}
  
   // UPLOAD A FILE TO CLOUDINARY (into Folder/Subfolder)
   const uploadFile = async (f: File, type: "audio" | "text") => {
@@ -141,28 +154,65 @@ export default function AdminPage() {
     return result.secure_url as string
   }
  
-  const handlePick = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    kind: "audio" | "english" | "tamil"
-  ) => {
-    const f = e.target.files?.[0]
-    if (!f) return
- 
-    setUploadMsg(`Uploading ${f.name} ...`)
- 
-    const url = await uploadFile(f, kind === "audio" ? "audio" : "text")
- 
-    if (url) {
-      if (kind === "audio") setFile(url)
-      if (kind === "english") setLyrics(url)
-      if (kind === "tamil") setLyricsTamil(url)
-      setUploadMsg(`Uploaded: ${f.name}`)
-    } else {
-      setUploadMsg("")
-    }
- 
-    e.target.value = ""
+  const processFile = async (
+  f: File,
+  kind: "audio" | "english" | "tamil"
+) => {
+  const isAudio = kind === "audio"
+
+  if (isAudio && !f.type.startsWith("audio/") &&
+      !f.name.toLowerCase().endsWith(".mp3")) {
+    alert("Please select an audio file.")
+    return
   }
+
+  if (!isAudio &&
+      !f.name.toLowerCase().endsWith(".txt") &&
+      f.type !== "text/plain") {
+    alert("Please select a .txt lyrics file.")
+    return
+  }
+
+  setUploadMsg(`Uploading ${f.name} ...`)
+
+  try {
+    const url = await uploadFile(f, isAudio ? "audio" : "text")
+
+    if (!url) {
+      setUploadMsg("")
+      return
+    }
+
+    if (kind === "audio") setFile(url)
+    if (kind === "english") setLyrics(url)
+    if (kind === "tamil") setLyricsTamil(url)
+
+    setUploadMsg(`Uploaded: ${f.name}`)
+  } catch (error) {
+    console.error(error)
+    setUploadMsg("Upload failed. Please try again.")
+  }
+}
+
+const handlePick = async (
+  e: React.ChangeEvent<HTMLInputElement>,
+  kind: "audio" | "english" | "tamil"
+) => {
+  const f = e.target.files?.[0]
+  if (f) await processFile(f, kind)
+  e.target.value = ""
+}
+
+const handleDrop = async (
+  e: React.DragEvent<HTMLDivElement>,
+  kind: "audio" | "english" | "tamil"
+) => {
+  e.preventDefault()
+  setDragging("")
+
+  const f = e.dataTransfer.files?.[0]
+  if (f) await processFile(f, kind)
+}
  
   // ADD SONG
   const addSong = async () => {
@@ -284,7 +334,70 @@ export default function AdminPage() {
     setData(updated)
     await saveToCloud(updated)
   }
- 
+  const importDrive = async (kind: "audio" | "english" | "tamil") => {
+  const link = driveLinks[kind].trim()
+  if (!link) return
+
+  const folderName = cleanName(folderValue)
+  const subName = cleanName(subfolderValue)
+
+  if (!folderName) {
+    alert("Please choose a folder first.")
+    return
+  }
+
+  const assetFolder = subName ? `${folderName}/${subName}` : folderName
+
+  setUploadMsg("Importing from Google Drive ...")
+
+  try {
+    const res = await fetch("/api/import-drive", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        password,
+        driveUrl: link,
+        assetFolder,
+        type: kind === "audio" ? "audio" : "text",
+      }),
+    })
+    const result = await res.json()
+
+    if (!res.ok || !result.success) {
+      alert("Import failed: " + (result.error || "unknown error"))
+      setUploadMsg("")
+      return
+    }
+
+    if (kind === "audio") setFile(result.url)
+    if (kind === "english") setLyrics(result.url)
+    if (kind === "tamil") setLyricsTamil(result.url)
+
+    setDriveLinks({ ...driveLinks, [kind]: "" })
+    setUploadMsg("Imported from Drive")
+  } catch {
+    alert("Import failed. The file may be too big, so try the file picker.")
+    setUploadMsg("")
+  }
+}
+
+const driveBox = (kind: "audio" | "english" | "tamil") => (
+  <div className="flex gap-2 mb-3">
+    <input
+      placeholder="Or paste a Google Drive link"
+      className="border p-2 flex-1"
+      value={driveLinks[kind]}
+      onChange={(e) => setDriveLinks({ ...driveLinks, [kind]: e.target.value })}
+    />
+    <button
+      type="button"
+      className="bg-purple-500 text-white px-3 py-2"
+      onClick={() => importDrive(kind)}
+    >
+      Import
+    </button>
+  </div>
+)
   // LOGIN SCREEN
   if (!isLoggedIn) {
     return (
@@ -406,28 +519,66 @@ export default function AdminPage() {
         </p>
  
         {/* AUDIO */}
-        <label className="block text-sm font-semibold mb-1">Audio file (mp3)</label>
-        <input
-          type="file"
-          accept="audio/*"
-          className="mb-2 w-full"
-          onChange={(e) => handlePick(e, "audio")}
-        />
-        <input
-          placeholder="Audio link (fills in after upload, or paste one)"
-          className="border p-2 w-full mb-3"
-          value={file}
-          onChange={(e) => setFile(e.target.value)}
-        />
+<label className="block text-sm font-semibold mb-1">
+  Audio file (mp3)
+</label>
+
+{/* DRAG AND DROP — ADD THIS */}
+<div
+  className={`border-2 border-dashed rounded p-5 mb-3 text-center ${
+    dragging === "audio"
+      ? "border-blue-500 bg-blue-50"
+      : "border-gray-400"
+  }`}
+  onDragOver={(e) => {
+    e.preventDefault()
+    setDragging("audio")
+  }}
+  onDragLeave={() => setDragging("")}
+  onDrop={(e) => handleDrop(e, "audio")}
+>
+  Drop an MP3 file here, or use the file picker below.
+</div>
+
+{/* EXISTING FILE INPUT — KEEP THIS */}
+<input
+  type="file"
+  accept=".mp3,audio/mpeg"
+  className="mb-2 w-full"
+  onChange={(e) => handlePick(e, "audio")}
+/>
+{driveBox("audio")}
+
+{/* EXISTING AUDIO LINK INPUT — KEEP THIS */}
+<input
+  placeholder="Audio link (fills in after upload, or paste one)"
+  className="border p-2 w-full mb-3"
+  value={file}
+  onChange={(e) => setFile(e.target.value)}
+/>
  
         {/* ENGLISH LYRICS */}
         <label className="block text-sm font-semibold mb-1">English lyrics</label>
+        <div
+  className={`border-2 border-dashed rounded p-4 mb-2 text-center ${
+    dragging === "english" ? "border-blue-500 bg-blue-50" : "border-gray-400"
+  }`}
+  onDragOver={(e) => {
+    e.preventDefault()
+    setDragging("english")
+  }}
+  onDragLeave={() => setDragging("")}
+  onDrop={(e) => handleDrop(e, "english")}
+>
+  Drop the English lyrics .txt file here.
+</div>
         <input
           type="file"
           accept=".txt,text/plain"
           className="mb-2 w-full"
           onChange={(e) => handlePick(e, "english")}
         />
+        {driveBox("english")}
         <textarea
           placeholder="English lyrics (paste text, or the link fills in after upload)"
           className="border p-2 w-full mb-3"
@@ -437,12 +588,26 @@ export default function AdminPage() {
  
         {/* TAMIL LYRICS */}
         <label className="block text-sm font-semibold mb-1">Tamil lyrics</label>
+        <div
+  className={`border-2 border-dashed rounded p-4 mb-2 text-center ${
+    dragging === "tamil" ? "border-blue-500 bg-blue-50" : "border-gray-400"
+  }`}
+  onDragOver={(e) => {
+    e.preventDefault()
+    setDragging("tamil")
+  }}
+  onDragLeave={() => setDragging("")}
+  onDrop={(e) => handleDrop(e, "tamil")}
+>
+  Drop the Tamil lyrics .txt file here.
+</div>
         <input
           type="file"
           accept=".txt,text/plain"
           className="mb-2 w-full"
           onChange={(e) => handlePick(e, "tamil")}
         />
+        {driveBox("tamil")}
         <textarea
           placeholder="Tamil lyrics (paste text, or the link fills in after upload)"
           className="border p-2 w-full mb-3"
