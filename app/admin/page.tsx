@@ -291,6 +291,61 @@ export default function AdminPage() {
     </div>
   )
  
+  // CLEANUP: every file link that some song still uses
+  const referencedUrls = (list: any[]) => {
+    const used = new Set<string>()
+ 
+    const add = (s: any) => {
+      for (const v of [s.file, s.lyrics, s.lyricsTamil]) {
+        if (typeof v === "string" && v.trim()) used.add(v.trim())
+      }
+    }
+ 
+    for (const f of list) {
+      for (const s of f.songs || []) add(s)
+      for (const sub of f.subfolders || []) {
+        for (const s of sub.songs || []) add(s)
+      }
+    }
+ 
+    return used
+  }
+ 
+  // Deletes from Cloudinary only the files that no song uses any more
+  const cleanupFiles = async (candidates: string[], remaining: any[]) => {
+    const keep = referencedUrls(remaining)
+ 
+    const urls = Array.from(
+      new Set(
+        candidates
+          .map((u) => (u || "").trim())
+          .filter(
+            (u) => u.startsWith("https://res.cloudinary.com/") && !keep.has(u)
+          )
+      )
+    )
+ 
+    if (urls.length === 0) return
+ 
+    try {
+      const res = await fetch("/api/delete-files", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password, urls }),
+      })
+      const result = await res.json()
+      console.log("Cleanup result:", result)
+ 
+      if (result.success && result.deleted > 0) {
+        setUploadMsg(
+          `Cleaned up ${result.deleted} unused file(s) from Cloudinary`
+        )
+      }
+    } catch (err) {
+      console.error("Cleanup failed:", err)
+    }
+  }
+ 
   // LIST HELPERS
   const removeSong = (list: any[], fileLink: string) =>
     list.map((f: any) => {
@@ -360,11 +415,32 @@ export default function AdminPage() {
     setDriveLinks({ audio: "", english: "", tamil: "" })
     setEditingFile(null)
     setEditOrigin({ folder: "", subfolder: "" })
+    setEditOriginal({ file: "", lyrics: "", lyricsTamil: "" })
+    setSessionUploads([])
+  }
+ 
+  // Cancel: also removes files uploaded in this form that were never saved
+  const cancelForm = async () => {
+    if (sessionUploads.length) {
+      await cleanupFiles(sessionUploads, data)
+    }
+    resetForm()
   }
  
   const startEdit = (song: any) => {
+    // Switching songs: remove anything uploaded for the previous, unsaved form
+    if (sessionUploads.length) {
+      cleanupFiles(sessionUploads, data)
+    }
+ 
+    setSessionUploads([])
     setEditingFile(song.file)
     setEditOrigin({ folder: song.folder, subfolder: song.subfolder || "" })
+    setEditOriginal({
+      file: song.file || "",
+      lyrics: song.lyrics || "",
+      lyricsTamil: song.lyricsTamil || "",
+    })
  
     setTitle(song.title || "")
     setFile(song.file || "")
@@ -425,7 +501,16 @@ export default function AdminPage() {
     const ok = await saveToCloud(updated)
  
     if (ok) {
+      // Old files of this song, plus anything uploaded here and not used
+      const candidates = [
+        ...sessionUploads,
+        ...(editingFile
+          ? [editOriginal.file, editOriginal.lyrics, editOriginal.lyricsTamil]
+          : []),
+      ]
+ 
       resetForm()
+      await cleanupFiles(candidates, updated)
     } else {
       setData(before)
     }
@@ -434,6 +519,7 @@ export default function AdminPage() {
   // DELETE SONG
   const deleteSong = async (fileToDelete: string) => {
     const before = data
+    const target = allSongs.find((s: any) => s.file === fileToDelete)
     const updated = removeSong(data, fileToDelete)
  
     setData(updated)
@@ -445,6 +531,13 @@ export default function AdminPage() {
     }
  
     if (editingFile === fileToDelete) resetForm()
+ 
+    if (target) {
+      await cleanupFiles(
+        [target.file, target.lyrics, target.lyricsTamil],
+        updated
+      )
+    }
   }
  
   // LOGIN SCREEN
@@ -684,7 +777,7 @@ export default function AdminPage() {
         {editingFile && (
           <button
             className="bg-gray-400 text-white px-4 py-2"
-            onClick={resetForm}
+            onClick={cancelForm}
           >
             Cancel
           </button>

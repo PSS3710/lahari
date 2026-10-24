@@ -16,6 +16,7 @@ const C = {
   soft: "#8A6A4A",
   lyricbg: "#e25b26",
 }
+const LYRIC_SIZES = [18, 24, 32, 42, 54]
  
 function FolderCard({ label, onClick }: { label: string; onClick: () => void }) {
   return (
@@ -83,6 +84,8 @@ export default function Home() {
   const [lyricsText, setLyricsText] = useState("")
   const [lyricsLang, setLyricsLang] = useState<"english" | "tamil">("english")
   const [showSplash, setShowSplash] = useState(false)
+  const [playerOpen, setPlayerOpen] = useState(false)
+  const [sizeIndex, setSizeIndex] = useState(1)
  
   useEffect(() => {
     fetch(CLOUD_URL + "?t=" + Date.now())
@@ -146,7 +149,23 @@ export default function Home() {
   const filteredSongs = allSongs.filter((song: any) =>
     (song.title || "").toLowerCase().includes(search.toLowerCase())
   )
- 
+  useEffect(() => {
+  try {
+    const saved = localStorage.getItem("lahariLyricSize")
+    if (saved !== null) {
+      const n = Number(saved)
+      if (n >= 0 && n < LYRIC_SIZES.length) setSizeIndex(n)
+    }
+  } catch {}
+}, [])
+
+function changeSize(delta: number) {
+  const n = Math.min(LYRIC_SIZES.length - 1, Math.max(0, sizeIndex + delta))
+  setSizeIndex(n)
+  try {
+    localStorage.setItem("lahariLyricSize", String(n))
+  } catch {}
+}
   function playSong(song: any) {
     setCurrentSong(song)
     setTimeout(() => {
@@ -155,12 +174,12 @@ export default function Home() {
   }
  
   function playNextSong() {
-    const i = allSongs.findIndex((s: any) => s.title === currentSong?.title)
+    const i = allSongs.findIndex((s: any) => s.file === currentSong?.file)
     if (i !== -1 && i < allSongs.length - 1) playSong(allSongs[i + 1])
   }
  
   function playPreviousSong() {
-    const i = allSongs.findIndex((s: any) => s.title === currentSong?.title)
+    const i = allSongs.findIndex((s: any) => s.file === currentSong?.file)
     if (i > 0) playSong(allSongs[i - 1])
   }
  
@@ -191,7 +210,7 @@ export default function Home() {
  
   return (
     <div
-      className="min-h-screen pb-80 font-serif"
+      className="min-h-screen pb-44 font-serif"
       style={{ background: C.bg, color: C.text }}
     >
     {showSplash && (
@@ -430,6 +449,7 @@ export default function Home() {
               ref={audioRef}
               controls
               src={currentSong.file}
+              onEnded={playNextSong}
               className="mt-3 w-full"
             />
           </div>
