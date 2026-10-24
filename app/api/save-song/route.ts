@@ -9,6 +9,18 @@ cloudinary.config({
 export async function POST(req: Request) {
   try {
     const body = await req.json()
+
+    // Only the admin can save changes to the song list
+    if (
+      !process.env.ADMIN_PASSWORD ||
+      body.password !== process.env.ADMIN_PASSWORD
+    ) {
+      return Response.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 }
+      )
+    }
+
     const updatedData = body.songs
 
     if (!Array.isArray(updatedData)) {
