@@ -17,6 +17,12 @@ const C = {
   lyricbg: "#e25b26",
 }
 const LYRIC_SIZES = [18, 24, 32, 42, 54]
+function formatTime(t: number) {
+  if (!isFinite(t)) return "0:00"
+  const m = Math.floor(t / 60)
+  const s = Math.floor(t % 60)
+  return `${m}:${s.toString().padStart(2, "0")}`
+}
  
 function FolderCard({ label, onClick }: { label: string; onClick: () => void }) {
   return (
@@ -86,6 +92,9 @@ export default function Home() {
   const [showSplash, setShowSplash] = useState(false)
   const [playerOpen, setPlayerOpen] = useState(false)
   const [sizeIndex, setSizeIndex] = useState(1)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(0)
  
   useEffect(() => {
     fetch(CLOUD_URL + "?t=" + Date.now())
@@ -166,6 +175,15 @@ function changeSize(delta: number) {
     localStorage.setItem("lahariLyricSize", String(n))
   } catch {}
 }
+function togglePlay() {
+  const a = audioRef.current
+  if (!a) return
+  if (a.paused) {
+    a.play().catch(() => {})
+  } else {
+    a.pause()
+  }
+}
   function playSong(song: any) {
     setCurrentSong(song)
     setTimeout(() => {
@@ -239,9 +257,7 @@ function changeSize(delta: number) {
       >
         <img
           src="/Amma photo.png"
-          alt="
-          
-                In loving memory"
+          alt="In loving memory"
           className="mx-auto h-28 w-28 rounded-full object-cover"
           style={{ border: `3px solid ${C.gold}` }}
         />
@@ -298,7 +314,7 @@ function changeSize(delta: number) {
                 <SongRow
                   key={i}
                   song={song}
-                  active={currentSong?.title === song.title}
+                  active={currentSong?.file === song.file}
                   onPlay={() => playSong(song)}
                   sub={`${song.folder}${song.subfolder ? ` → ${song.subfolder}` : ""}`}
                 />
@@ -352,7 +368,7 @@ function changeSize(delta: number) {
                     <SongRow
                       key={i}
                       song={song}
-                      active={currentSong?.title === song.title}
+                      active={currentSong?.file === song.file}
                       onPlay={() => playSong(song)}
                     />
                   ))}
@@ -377,7 +393,7 @@ function changeSize(delta: number) {
                     <SongRow
                       key={i}
                       song={song}
-                      active={currentSong?.title === song.title}
+                      active={currentSong?.file === song.file}
                       onPlay={() => playSong(song)}
                     />
                   ))}
@@ -388,72 +404,233 @@ function changeSize(delta: number) {
         )}
       </div>
  
-      {/* PLAYER */}
-      {currentSong && (
-        <div
-          className="fixed bottom-0 left-0 right-0 p-3"
-          style={{ background: C.lyricbg, color: C.cream }}
-        >
-          <div className="mx-auto max-w-3xl">
-            <div className="text-lg">{currentSong.title}</div>
-            <div className="mt-2 flex gap-2">
-  {[
-    { k: "english", l: "English" },
-    { k: "tamil", l: "Tamil" },
-  ].map((o) => {
-    const on = lyricsLang === o.k
-    return (
-      <button
-        key={o.k}
-        onClick={() => setLyricsLang(o.k as "english" | "tamil")}
-        className="rounded-full px-4 py-1 text-sm"
-        style={{
-          background: on ? C.cream : "transparent",
-          color: on ? C.maroon : C.cream,
-          border: `1px solid ${C.gold}`,
+{/* PLAYER */}
+{currentSong && (
+    <>
+      {/* The one and only audio element, hidden, controlled by the buttons */}
+      <audio
+        ref={audioRef}
+        src={currentSong.file}
+        onEnded={playNextSong}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+        onLoadedMetadata={(e) => {
+        const d = e.currentTarget.duration
+        setDuration(isFinite(d) ? d : 0)
         }}
-      >
-        {o.l}
-      </button>
-    )
-  })}
-</div>
+        className="hidden"
+          />
  
-            {lyricsText && (
-              <pre
-                className="mt-2 max-h-32 overflow-auto whitespace-pre-wrap rounded-lg p-3 text-sm"
-                style={{ background: C.bg, color: C.text }}
+          {/* MINI PLAYER BAR */}
+          <div
+            className="fixed bottom-0 left-0 right-0 z-30 shadow-2xl"
+            style={{ background: C.lyricbg, color: C.cream }}
+          >
+            <div className="h-1" style={{ background: "rgba(255,255,255,0.25)" }}>
+              <div
+                className="h-1"
+                style={{
+                  width: `${duration ? (currentTime / duration) * 100 : 0}%`,
+                  background: C.cream,
+                }}
+              />
+            </div>
+ 
+            <div className="mx-auto flex max-w-3xl items-center gap-3 px-3 py-2">
+              <button
+                onClick={() => setPlayerOpen(true)}
+                aria-label="Open lyrics"
+                className="flex min-w-0 flex-1 items-center gap-3 text-left"
               >
-                {lyricsText}
-              </pre>
-            )}
+                <img
+                  src="/backdropp192.png"
+                  alt=""
+                  className="h-12 w-12 shrink-0 rounded-lg object-cover"
+                />
+                <div className="min-w-0">
+                  <div className="truncate text-base font-semibold">
+                    {currentSong.title}
+                  </div>
+                  <div className="text-xs opacity-90">Tap to open lyrics ▲</div>
+                </div>
+              </button>
  
-            <div className="mt-3 flex gap-2">
               <button
                 onClick={playPreviousSong}
-                className="rounded-full px-4 py-1.5 text-sm"
-                style={{ border: `1px solid ${C.gold}`, color: C.cream }}
+                aria-label="Previous song"
+                className="shrink-0 px-2 py-2 text-xl"
               >
-                ⏮ Previous
+                ⏮
+              </button>
+              <button
+                onClick={togglePlay}
+                aria-label={isPlaying ? "Pause" : "Play"}
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-xl"
+                style={{ background: C.cream, color: C.maroon }}
+              >
+                {isPlaying ? "⏸" : "▶"}
               </button>
               <button
                 onClick={playNextSong}
-                className="rounded-full px-4 py-1.5 text-sm"
-                style={{ border: `1px solid ${C.gold}`, color: C.cream }}
+                aria-label="Next song"
+                className="shrink-0 px-2 py-2 text-xl"
               >
-                Next ⏭
+                ⏭
               </button>
             </div>
- 
-            <audio
-              ref={audioRef}
-              controls
-              src={currentSong.file}
-              onEnded={playNextSong}
-              className="mt-3 w-full"
-            />
           </div>
-        </div>
+ 
+          {/* FULL PLAYER: slides up when the mini bar is tapped */}
+          <div
+            className={`fixed inset-0 z-40 flex flex-col transition-transform duration-300 ${
+              playerOpen
+                ? "translate-y-0"
+                : "pointer-events-none translate-y-full"
+            }`}
+            style={{ background: C.lyricbg, color: C.cream }}
+            aria-hidden={!playerOpen}
+          >
+            <div className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col p-4">
+              {/* TOP: close and title */}
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setPlayerOpen(false)}
+                  aria-label="Close player"
+                  className="shrink-0 rounded-full px-3 py-1 text-2xl"
+                  style={{ border: `1px solid ${C.gold}` }}
+                >
+                  ⌄
+                </button>
+                <div className="min-w-0 flex-1 text-center">
+                  <div className="text-xs uppercase tracking-wide opacity-90">
+                    Now playing
+                  </div>
+                  <div className="truncate text-xl font-semibold">
+                    {currentSong.title}
+                  </div>
+                </div>
+                <div className="w-11 shrink-0" />
+              </div>
+ 
+              {/* LANGUAGE AND TEXT SIZE */}
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                {[
+                  { k: "english", l: "English" },
+                  { k: "tamil", l: "Tamil" },
+                ].map((o) => {
+                  const on = lyricsLang === o.k
+                  return (
+                    <button
+                      key={o.k}
+                      onClick={() => setLyricsLang(o.k as "english" | "tamil")}
+                      className="rounded-full px-4 py-1.5 text-sm"
+                      style={{
+                        background: on ? C.cream : "transparent",
+                        color: on ? C.maroon : C.cream,
+                        border: `1px solid ${C.gold}`,
+                      }}
+                    >
+                      {o.l}
+                    </button>
+                  )
+                })}
+ 
+                <div className="ml-auto flex items-center gap-2">
+                  <button
+                    onClick={() => changeSize(-1)}
+                    disabled={sizeIndex === 0}
+                    aria-label="Smaller text"
+                    className="rounded-full px-4 py-1.5 text-sm disabled:opacity-40"
+                    style={{ border: `1px solid ${C.gold}` }}
+                  >
+                    A−
+                  </button>
+                  <button
+                    onClick={() => changeSize(1)}
+                    disabled={sizeIndex === LYRIC_SIZES.length - 1}
+                    aria-label="Bigger text"
+                    className="rounded-full px-4 py-1.5 text-xl disabled:opacity-40"
+                    style={{ border: `1px solid ${C.gold}` }}
+                  >
+                    A+
+                  </button>
+                </div>
+              </div>
+ 
+              {/* LYRICS */}
+              <div
+                className="mt-3 min-h-0 flex-1 overflow-auto rounded-2xl p-4"
+                style={{ background: C.bg, color: C.text }}
+              >
+                {lyricsText && lyricsText.trim().toUpperCase() !== "NONE" ? (
+                  <pre
+                    className="whitespace-pre-wrap font-serif"
+                    style={{
+                      fontSize: LYRIC_SIZES[sizeIndex],
+                      lineHeight: 1.7,
+                    }}
+                  >
+                    {lyricsText}
+                  </pre>
+                ) : (
+                  <p className="text-center" style={{ color: C.soft }}>
+                    No lyrics for this song yet
+                  </p>
+                )}
+              </div>
+ 
+              {/* PROGRESS */}
+              <div className="mt-4">
+                <input
+                  type="range"
+                  min={0}
+                  max={duration || 0}
+                  step={1}
+                  value={Math.min(currentTime, duration || 0)}
+                  onChange={(e) => {
+                    const t = Number(e.target.value)
+                    if (audioRef.current) audioRef.current.currentTime = t
+                    setCurrentTime(t)
+                  }}
+                  aria-label="Song progress"
+                  className="w-full"
+                  style={{ accentColor: C.cream }}
+                />
+                <div className="flex justify-between text-xs opacity-90">
+                  <span>{formatTime(currentTime)}</span>
+                  <span>{formatTime(duration)}</span>
+                </div>
+              </div>
+ 
+              {/* BIG CONTROLS */}
+              <div className="mt-2 flex items-center justify-center gap-8">
+                <button
+                  onClick={playPreviousSong}
+                  aria-label="Previous song"
+                  className="p-3 text-3xl"
+                >
+                  ⏮
+                </button>
+                <button
+                  onClick={togglePlay}
+                  aria-label={isPlaying ? "Pause" : "Play"}
+                  className="flex h-16 w-16 items-center justify-center rounded-full text-3xl"
+                  style={{ background: C.cream, color: C.maroon }}
+                >
+                  {isPlaying ? "⏸" : "▶"}
+                </button>
+                <button
+                  onClick={playNextSong}
+                  aria-label="Next song"
+                  className="p-3 text-3xl"
+                >
+                  ⏭
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   )
