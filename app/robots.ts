@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/admin", "/api"],
     },
-    sitemap: "https://lahariannapoorna.in/sitemap.xml",
+    sitemap: "https://www.lahariannapoorna.in/sitemap.xml",
   };
 }

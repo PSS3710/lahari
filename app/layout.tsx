@@ -12,17 +12,18 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Lahari",
-  description: "Songs of devotion, in loving memory",
-  icons: {
-    icon: [
-      { url: "/backdropp192.png", sizes: "192x192", type: "image/png" },
-      { url: "/backdropp512.png", sizes: "512x512", type: "image/png" },
-    ],
-    apple: "/backdropp192.png",
+export const metadata = {
+  title: "Lahari | Devotional Songs & Lyrics",
+  description: "Listen to devotional songs with lyrics. Browse by folder and search your favourite bhajans.",
+  metadataBase: new URL("https://www.lahariannapoorna.in"),
+  openGraph: {
+    title: "Lahari | Devotional Songs & Lyrics",
+    description: "Listen to devotional songs with lyrics.",
+    url: "https://www.lahariannapoorna.in",
+    siteName: "Lahari",
+    type: "website",
   },
-}
+};
 
 export default function RootLayout({
   children,
@@ -38,3 +39,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+
