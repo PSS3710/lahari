@@ -227,10 +227,25 @@ function togglePlay() {
   )
  
   return (
+
     <div
-      className="min-h-screen pb-44 font-serif"
-      style={{ background: C.bg, color: C.text }}
-    >
+  className="min-h-screen pb-44 font-serif"
+  style={{ background: C.bg, color: C.text }}
+>
+  <script
+    type="application/ld+json"
+    dangerouslySetInnerHTML={{
+      __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: "Lahari",
+        url: "https://www.lahariannapoorna.in",
+        description:
+          "Devotional songs written and sung by Mrs. Annapoorna.",
+        creator: { "@type": "Person", name: "Sai Sarvesh" },
+      }),
+    }}
+  />
     {showSplash && (
       <div
         className="fixed inset-0 z-50 flex flex-col items-center justify-center px-6 text-center"
@@ -402,15 +417,6 @@ function togglePlay() {
             )}
           </div>
         )}
-      </div>
-      {/* CREDITS */}
-      <div className="mt-10 px-4 text-center text-sm font-bold">
-        <p style={{ color:"#3F6B3A" }}>
-          Songs written and sung by Mrs. Annapoorna Nagaraju
-        </p>
-        <p className="mt-1" style={{ color: "#3F6B3A" }}>
-          Website designed and created by Sai Sarvesh P
-        </p>
       </div>
  
 {/* PLAYER */}

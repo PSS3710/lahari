@@ -17,6 +17,10 @@ export const metadata = {
   description: "Listen to devotional songs with lyrics. Browse by folder and search your favourite bhajans.",
   metadataBase: new URL("https://www.lahariannapoorna.in"),
   creator: "Sai Sarvesh P",
+  other: {
+  "website-creator": "Sai Sarvesh",
+  "website-note": "Songs written and sung by Mrs. Annapoorna. Website created by Sai Sarvesh.",
+  },
   openGraph: {
     title: "Lahari | Devotional Songs & Lyrics",
     description: "Listen to devotional songs with lyrics.",
