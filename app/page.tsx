@@ -418,7 +418,11 @@ function togglePlay() {
           </div>
         )}
       </div>
- 
+      {/* CREDITS */}
+      <div className="px-4 pt-10 text-left" style={{ fontSize: 11, color: "#BFAE92" }}>
+        <p>Songs written and sung by Mrs. Annapoorna</p>
+        <p>Website designed and created by Sai Sarvesh P</p>
+      </div>
 {/* PLAYER */}
 {currentSong && (
     <>
