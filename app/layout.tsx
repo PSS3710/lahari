@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Lahari | Devotional Songs & Lyrics",
-  description: "Devotional songs and stotrams sung by Mrs. Annapoorna Nagaraju, with lyrics. Roju Oka Chinthana shares timeless values of Sanatana Dharma.",
+  description: "In loving memory:Devotional songs, Ashtakams, Sthothrams, and Shatakams sung by Mrs. Annapoorna Nagaraju, with English and Tamil lyrics.",
   metadataBase: new URL("https://www.lahariannapoorna.in"),
   creator: "Sai Sarvesh P",
   other: {
@@ -23,7 +23,7 @@ export const metadata = {
   },
   openGraph: {
     title: "Lahari | Devotional Songs & Lyrics",
-    description: "Devotional songs and stotrams sung by Mrs. Annapoorna Nagaraju, with lyrics. Roju Oka Chinthana shares timeless values of Sanatana Dharma.",
+    description: "In loving memory:Devotional songs, Ashtakams, Sthothrams, and Shatakams sung by Mrs. Annapoorna Nagaraju, with English and Tamil lyrics.",
     url: "https://www.lahariannapoorna.in",
     siteName: "Lahari",
     type: "website",
