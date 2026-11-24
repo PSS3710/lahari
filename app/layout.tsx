@@ -14,16 +14,16 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Lahari | Devotional Songs & Lyrics",
-  description: "Listen to devotional songs with lyrics. Browse by folder and search your favourite bhajans.",
+  description: "Devotional songs and stotrams sung by Mrs. Annapoorna Nagaraju, with lyrics. Roju Oka Chinthana shares timeless values of Sanatana Dharma.",
   metadataBase: new URL("https://www.lahariannapoorna.in"),
   creator: "Sai Sarvesh P",
   other: {
   "website-creator": "Sai Sarvesh",
-  "website-note": "Songs written and sung by Mrs. Annapoorna. Website created by Sai Sarvesh.",
+  "website-note": "Songs written and sung by Mrs. Annapoorna Nagaraju. Website designed and created by Sai Sarvesh P.",
   },
   openGraph: {
     title: "Lahari | Devotional Songs & Lyrics",
-    description: "Listen to devotional songs with lyrics.",
+    description: "Devotional songs and stotrams sung by Mrs. Annapoorna Nagaraju, with lyrics. Roju Oka Chinthana shares timeless values of Sanatana Dharma.",
     url: "https://www.lahariannapoorna.in",
     siteName: "Lahari",
     type: "website",
