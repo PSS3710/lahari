@@ -403,6 +403,15 @@ function togglePlay() {
           </div>
         )}
       </div>
+      {/* CREDITS */}
+      <div className="mt-10 px-4 text-center text-sm font-bold">
+        <p style={{ color:"#3F6B3A" }}>
+          Songs written and sung by Mrs. Annapoorna Nagaraju
+        </p>
+        <p className="mt-1" style={{ color: "#3F6B3A" }}>
+          Website designed and created by Sai Sarvesh P
+        </p>
+      </div>
  
 {/* PLAYER */}
 {currentSong && (

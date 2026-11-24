@@ -16,6 +16,7 @@ export const metadata = {
   title: "Lahari | Devotional Songs & Lyrics",
   description: "Listen to devotional songs with lyrics. Browse by folder and search your favourite bhajans.",
   metadataBase: new URL("https://www.lahariannapoorna.in"),
+  creator: "Sai Sarvesh P",
   openGraph: {
     title: "Lahari | Devotional Songs & Lyrics",
     description: "Listen to devotional songs with lyrics.",
